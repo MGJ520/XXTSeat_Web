@@ -90,7 +90,7 @@ function SyncData() {
     };
 
     // 发送POST请求到服务器
-    fetch('/contact', {
+    fetch('/api/get/contact', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -139,7 +139,7 @@ function SyncData() {
 
 // 获取房间数据的函数
 function fetchRoomData() {
-    fetch('/get-room-data')
+    fetch('/api/get/room_data')
         .then(response => response.json())
         .then(data => {
             roomData = data; // 保存房间数据到全局变量
@@ -157,7 +157,7 @@ function fetchRoomData() {
 
 // 获取座位数据的函数
 function fetchSeatsData() {
-    fetch('/get-seats-data')
+    fetch('/api/get/seats_data')
         .then(response => response.json())
         .then(data => {
 
@@ -219,10 +219,10 @@ function AutoReservation(button) {
     const account = row.cells[0].innerText;
     if (button.innerText === '启用') {
 
-        sendSeatAction_reservation(button, '/enable-auto-reservation', {account, data: true});
+        sendSeatAction_reservation(button, '/api/set/auto_reservation', {account, data: true});
     } else {
 
-        sendSeatAction_reservation(button, '/enable-auto-reservation', {account, data: false});
+        sendSeatAction_reservation(button, '/api/set/auto_reservation', {account, data: false});
     }
 }
 
@@ -261,7 +261,7 @@ function sendSeatAction_reservation(button, url, data) {
 function cancelSeat(button) {
     const row = button.parentNode.parentNode;
     const account = row.cells[0].innerText;
-    sendSeatAction_cancel_seat('/cancel-seat', {account});
+    sendSeatAction_cancel_seat('/api/set/cancel_seat', {account});
 }
 
 
@@ -380,7 +380,7 @@ function deleteRow(button) {
     };
 
     // 发送删除请求到服务器
-    fetch('/delete-appointment', {
+    fetch('/api/delete/appointment', {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

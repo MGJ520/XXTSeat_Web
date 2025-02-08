@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsoft 账户</title>
+    <link href="/static/home_style.css" rel="stylesheet">
+    <script src="/static/home_script.js"></script>
+</head>
+<body>
+<div class="header">
+    <div>Microsoft 账户</div>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
+</div>
+<div class="container">
+    <div class="sidebar" id="sidebar">
+        <button class="nav-button" data-path="/control-panel">控制面板</button>
+        <button class="nav-button" data-path="/accounts">账户</button>
+        <button class="nav-button" >小黑屋</button>
+        <button class="nav-button" data-path="/subscriptions">订阅</button>
+        <button class="nav-button" data-path="/help">帮助</button>
+        <button class="nav-button" id="nav-button-logout">注销</button>
+    </div>
+    <div class="content" id="content">
+        <h2>信息</h2>
+        <div class="device-card">
+            <img src="/static/device.png" alt="Device">
+            <div class="device-info">
+                <h2>MGJ1</h2>
+                <p>21/8</p>
+                <p><a href="#">查看详细信息</a></p>
+                <p>桃江县, 湖南省</p>
+                <p>2025/2/8</p>
+                <p>序列: PF4J5PDX</p>
+            </div>
+        </div>
+        <div class="device-card">
+            <img src="/static/device.png" alt="Device">
+            <div class="device-info">
+                <h2>MGJ2</h2>
+                <p>21/8</p>
+                <p><a href="#">查看详细信息</a></p>
+                <p>桃江县, 湖南省</p>
+                <p>2025/2/8</p>
+                <p>序列: PF4J5PDX</p>
+            </div>
+        </div>
+        <div>
+            <p>相关链接: <a href="#">查看帮助</a> &amp; <a href="#">学习</a></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

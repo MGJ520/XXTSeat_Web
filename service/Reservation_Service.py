@@ -115,12 +115,6 @@ class ReservationService:
     def run_periodically(self, interval):
         while True:
             logging.info(f"-----------------------------{get_current_hour()}--------------------------------")
-            current_time = datetime.datetime.now()
-            start_time = parse_time(TIME_START_TIME)
-            end_time = parse_time(TIME_END_TIME)
-            print(start_time)
-            print(current_time)
-            print(end_time)
             if not is_within_time_range(TIME_START_TIME, TIME_END_TIME):
                 print("Reached end time.不更新.")
             else:

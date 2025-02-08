@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="com.obiscr.chatgpt.settings.EasyCodeState">
+    <option name="projectFiles" value="$PROJECT_DIR$/database/MySql.py;D:/XXT/XXT_Web/static/index_script.js;D:/XXT/XXT_Web/static/index_style.css;D:/XXT/XXT_Web/static/login_script.js;D:/XXT/XXT_Web/static/login_style.css;D:/XXT/XXT_Web/task/ReservationService.py;D:/XXT/XXT_Web/task/test.py;D:/XXT/XXT_Web/templates/index.html;D:/XXT/XXT_Web/templates/login.html;D:/XXT/XXT_Web/templates/test.html;D:/XXT/XXT_Web/utils/reserve.py;D:/XXT/XXT_Web/utils/tool.py;D:/XXT/XXT_Web/Appoint_Main.py;D:/XXT/XXT_Web/Web_Main.py" />
+  </component>
+</project>
