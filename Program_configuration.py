@@ -1,3 +1,4 @@
+from datetime import timedelta
 
 #--------------------------------MYSQL数据库设置---------------------------------
 # 你的MYSQL数据库IP，localhost是本机
@@ -7,6 +8,20 @@ MYSQL_USER     ='root'
 # 你的MYSQL数据库密码
 MYSQL_PASSWORD ='123456'
 
+WEB_SERVER_PORT=80
+
+WEB_EXPIRATION_DATE=24
+
+LOW_MAX_REQUESTS=30
+HIGN_MAX_REQUESTS=10
+HIGN_LONG_MAX_REQUESTS=5
+
+
+LOW_REQUEST_TIME_WINDOW      =timedelta(seconds=30)
+HIGN_REQUEST_TIME_WINDOW     =timedelta(minutes=1)
+HIGN_LONG_REQUEST_TIME_WINDOW=timedelta(minutes=1)
+
+
 
 #--------------------------------预约设置---------------------------------
 # 每个用户每次抢座的间隔 s
@@ -15,7 +30,7 @@ SUB_SLEEP_TIME        = 0.7
 # 如果预约失败 每个用户最大尝试次数
 SUB_MAX_ATTEMPT       = 10
 
-# True预约明天座位  False预约今天座位  
+# True预约明天座位  False预约今天座位
 RESERVE_NEXT_DAY      = True
 
 #--------------------------------检查设置---------------------------------

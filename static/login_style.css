@@ -52,6 +52,17 @@ body {
     overflow: hidden;
     margin-bottom: 10px;
 }
+/* 在 login_style.css 文件中添加以下样式 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.logo img {
+    animation-name: fadeIn;
+    animation-duration: 1.5s; /* 动画持续时间 */
+    animation-fill-mode: forwards; /* 保持动画结束状态 */
+}
 
 
 .header {

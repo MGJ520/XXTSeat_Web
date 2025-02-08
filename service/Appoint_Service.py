@@ -4,7 +4,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 
 from Program_configuration import SUB_SLEEP_TIME, SUB_MAX_ATTEMPT, RESERVE_NEXT_DAY
-from utils.MySql_Function import AppointmentDB
+from utils.Database_Function import DatabaseManager
 from utils.Xxt_WebApi import XxTWebApi
 from utils.General_Function import get_user_credentials
 
@@ -45,21 +45,11 @@ def login_and_reserve_single_user(user, username, password, action):
 
 
 def main_parallel(action=False):
-    db = AppointmentDB()
+    db = DatabaseManager()
 
 
     # 转化数据
-    users = db.fetch_appointments()
-    # 数据类型如下
-    # "username": row[0],
-    # "password": row[1],
-    # "time": [start_time_str, end_time_str],
-    # "roomid": str(row[4]),  # 假设room_location是整数类型
-    # "seatid": [seat_location_str],  # 确保seatid是三位数的字符串格式
-    # "daysofweek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-    # 'is_auto_reservation': row[6]
-
-
+    users = db.fetch_check_information()
     usernames, passwords = None, None
     if action:
         usernames, passwords = get_user_credentials(action)

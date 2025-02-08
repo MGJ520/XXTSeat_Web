@@ -102,7 +102,7 @@ class XxTWebApi:
             # logging.info(f"[login] - User {username} login successfully")
             return (True, '')
         else:
-            logging.error(f"[login] - User {username} login failed. Please check you password and username! ")
+            logging.error(f"[login] - User {username} login failed. Please check you password and username! {obj}")
             return (False, obj['msg2'])
 
         # 时间戳转换1
