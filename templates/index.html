@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>主页</title>
+
+    <link rel="icon" type="image/png" href="/index_icon.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!--   js文件-->
+    <script src="/static/index_script.js"></script>
+    <!--   css文件-->
+    <link href="/static/index_style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<h1>图书馆座位预约</h1>
+
+<table id="seatsTable">
+    <thead>
+    <tr>
+        <th>账号</th>
+        <th>密码</th>
+        <th>时间</th>
+        <th>座位</th>
+        <th>状态(每5min)</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody id="seatsTableBody">
+    <!-- 座位数据将被动态填充 -->
+    </tbody>
+</table>
+
+
+<h2>预约项</h2>
+<form method="post" id="addForm">
+
+    <label for="username">账号:</label>
+    <input type="text" id="username" name="username" placeholder="学习通手机号" required pattern="\d{11}"><br><br>
+
+    <label for="password">密码:</label>
+    <input type="password" id="password" name="password" placeholder="学习通密码" required><br><br>
+
+
+    <table>
+        <tr>
+            <td>
+                <label for="timeSlot">预约开始时间:</label>
+                <input type="time" id="timeSlot" name="timeSlot" required step="1800">
+            </td>
+            <td>
+                <label for="endTime">预约结束时间:</label>
+                <input type="time" id="endTime" name="endTime" required step="1800">
+            </td>
+        </tr>
+    </table>
+    <br>
+
+
+    <table>
+        <tr>
+            <td>
+                <label for="room">房间位置:</label>
+                <select id="room" name="room" required onchange="updateSeats(this.value)">
+                    <!-- 房间选项将被动态填充 -->
+                </select>
+                <!-- 隐藏的输入字段，用于存储房间的ID -->
+                <input type="hidden" id="roomId" name="roomId">
+            </td>
+            <td>
+                <label for="seat">座位位置:</label>
+                <!-- 座位选择下拉菜单 -->
+                <select id="seat" name="seat" required>
+                    <option value="">请先选择房间</option>
+                    <!-- 座位选项将被动态填充 -->
+                </select>
+            </td>
+        </tr>
+    </table>
+
+
+    <br>
+    <button onclick="SyncData()">同步</button>
+
+</form>
+
+</body>
+</html>

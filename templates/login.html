@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    <link href="/static/login_style.css" rel="stylesheet">
+    <script src="/static/login_script.js"></script>
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <div class="login-form container">
+
+        <div class="logo">
+            <img src="/static/microsoft_logo.svg" alt="">
+        </div>
+
+        <div class="sign-in" id="form1">
+
+            <form action="" method="post">
+
+                <div class="header">
+                    <h2>登录</h2>
+                </div>
+
+
+                <div class="input-box">
+                    <label>用户</label>
+                    <input type="text" placeholder="Email">
+                </div>
+
+                <div class="error">
+                    <p>不能为空！</p>
+                </div>
+
+                <div class="input-box">
+                    <label>密码</label>
+                    <input type="password" placeholder="Password">
+
+                </div>
+
+                <div class="row">
+                    <p>没有账户？
+                        <a onclick="signUp()">创建一个！</a>
+                    </p>
+                </div>
+
+
+                <div class="btn-box">
+                    <div></div>
+                    <button class="button" onclick="pustSignIn()">登录</button>
+                </div>
+
+            </form>
+        </div>
+
+
+        <div class="sign-up container is-hidden" id="form2">
+            <form action="" method="post">
+
+                <div class="header">
+                    <h2>注册</h2>
+                </div>
+
+                <div class="input-box">
+                    <label>用户名</label>
+                    <input type="text" placeholder="Username">
+                </div>
+
+                <div class="input-box">
+                    <label>邮箱</label>
+                    <input type="text" placeholder="Email">
+                </div>
+
+                <div class="input-box">
+                    <label>密码</label>
+                    <input type="password" placeholder="Password">
+
+                </div>
+
+                <div class="btn-box">
+                    <div class="row">
+                        <p>已有账户？
+                            <a onclick="backSighIn()">返回登录</a>
+                        </p>
+
+                    </div>
+                    <button class="button" onclick="postSignUp()">注册</button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="/static/login_script.js"></script>
+</body>
+
+</html>
