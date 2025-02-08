@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="HttpClientEndpointsTabState">
-    <option name="requestToText" value="&lt;CachedHttpClientTabRequests&gt;&#10;  &lt;entry key=&quot;429ba703eddded69e3a04196b1947df961646e74&quot; value=&quot;###&amp;#10;POST http://localhost:5000/contact&quot; /&gt;&#10;  &lt;entry key=&quot;686d985ea5563ab31b37f8bcdfca90a28518b169&quot; value=&quot;###&amp;#10;DELETE http://192.168.3.232:8088/delete-appointment&quot; /&gt;&#10;  &lt;entry key=&quot;70cb6fdd9c208924e1f17196de23385e24b4f8f5&quot; value=&quot;###&amp;#10;POST http://localhost:5000/enable-auto-reservation&quot; /&gt;&#10;  &lt;entry key=&quot;1fa0bcbb13ca2acc60d9fc0945a9a9acba55f968&quot; value=&quot;###&amp;#10;GET http://localhost:5000/get-room-data&quot; /&gt;&#10;&lt;/CachedHttpClientTabRequests&gt;" />
-  </component>
-</project>
