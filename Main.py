@@ -57,6 +57,7 @@ def rate_limit_ip(service_name, max_requests, time_window):
             # 初始化服务的数据结构
             if service_name not in service_request_counts:
                 service_request_counts[service_name] = {}
+
             if client_ip not in service_request_counts[service_name]:
                 service_request_counts[service_name][client_ip] = deque()
 
@@ -498,11 +499,13 @@ def web_service():
 
 # ------------------------------主函数--------------------------------------------------
 if __name__ == '__main__':
+
     # 数据库初始化
     DatabaseManager()
 
     # 检查服务
     ReservationCheckService()
+
     # Web服务
     web_service()
 
