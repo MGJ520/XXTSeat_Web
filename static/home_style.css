@@ -1,3 +1,9 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -16,8 +22,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    overflow: visible; /* 确保内容不会被隐藏 */
+    overflow: visible; 
 }
+
 
 .container {
     display: flex;
@@ -26,11 +33,24 @@ body {
     flex-direction: row; /* 默认为行布局 */
 }
 
+
+
+.top {
+    height: 25px;
+    margin: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+}
+
+
 .sidebar {
     width: 200px;
     background-color: #f0f0f0;
     padding: 20px;
-    height: 100vh; /* 设置侧边栏高度为视口高度的100% */
+    height: 100vh; 
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease-in-out;
 }
@@ -59,42 +79,144 @@ body {
 
 
 }
+
+
+
 .content {
     flex-grow: 1;
     padding: 25px;
 }
 
-.device-card {
+
+.user-card {
+    min-width: 300px;
     background-color: white;
     padding: 20px;
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
+    display: grid;
+    grid-template-rows: 50% 50%;
+
 }
 
-.device-card img {
-    width: 100px;
-    height: auto;
+
+.user-info {
+    
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+
 }
 
-.device-info {
-    margin-left: 120px;
+
+
+.overview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    
 }
 
-.device-info h2 {
-    margin: 0;
-}
-
-.device-info p {
+.user-info p {
     margin: 5px 0;
     color: #666;
 }
+
+
+
+.status {
+    width: 50%;
+    height: 50px;
+    min-width: 200px;
+    background-color: rgba(255, 0, 0, 0.6);
+    border-radius: 5px;
+}
+
+
+.btn-box {
+    max-width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    border-radius: 5px;
+    border: dashed 1px;
+
+}
+
+
+button {
+
+    margin: 5px;
+    justify-content: center;
+    align-items: center;
+
+    background-color: #0078D7;
+    border-radius: 5px;
+    border: none;
+
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+}
+
+button:hover {
+    background-color: #005EA5;
+}
+
+
+
 
 .menu-toggle {
     display: none; /* 默认不显示 */
     cursor: pointer;
     visibility: visible; /* 确保可见 */
 }
+
+
+
+
+
+.dialog-box {
+    width: 50vh;
+    height: auto;
+    z-index: 10000;
+    position: relative;
+    background-color: #ff3333;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+input {
+    height: 40px;
+    width: 100%;
+    padding: 6px;
+    margin: 5px;
+    border: none;
+    border: #333 solid 1px;
+    border-radius: 5px;
+    outline: none;
+}
+
+
+.time {
+    display:grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 50% 50%;
+}
+
+input:focus {
+    border: #0078D7 solid 1px;
+}
+
+
+
+
 
 @media (max-width: 768px) {
     .sidebar {
