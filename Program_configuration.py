@@ -1,43 +1,57 @@
 from datetime import timedelta
 
+#------------------------------------WEB设置-----------------------------------
+#Web登录有效期 h
+WEB_EXPIRATION_DATE   =24
+
+#Web服务器地址服务端口，80是默认http端口
+WEB_SERVER_PORT       =80
+
+# 接口ip限制
+# 设置请求时间窗口和最大请求次数
+LOW_REQUEST_TIME_WINDOW = timedelta(seconds=30)
+# 最大请求次数
+LOW_MAX_REQUESTS        = 10
+
+# 设置请求时间窗口和最大请求次数
+MIN_REQUEST_TIME_WINDOW = timedelta(seconds=30)
+# 最大请求次数
+MIN_MAX_REQUESTS        = 5
+
+# 设置请求时间窗口和最大请求次数
+HIGN_REQUEST_TIME_WINDOW = timedelta(minutes=1)
+# 最大请求次数
+HIGN_MAX_REQUESTS        = 5
+
+# 设置请求时间窗口和最大请求次数
+HIGN_LONG_REQUEST_TIME_WINDOW = timedelta(hours=24)
+# 最大请求次数
+HIGN_LONG_MAX_REQUESTS        = 5
+
 #--------------------------------MYSQL数据库设置---------------------------------
-# 你的MYSQL数据库IP，localhost是本机
-MYSQL_HOST     ='localhost'
+# 你的MYSQL数据库IP，localhost是本机地址
+MYSQL_HOST            ='localhost'
 # 你的MYSQL数据库用户名
-MYSQL_USER     ='root'
+MYSQL_USER            ='root'
 # 你的MYSQL数据库密码
-MYSQL_PASSWORD ='123456'
-
-WEB_SERVER_PORT=80
-
-WEB_EXPIRATION_DATE=24
-
-LOW_MAX_REQUESTS=30
-HIGN_MAX_REQUESTS=10
-HIGN_LONG_MAX_REQUESTS=5
-
-
-LOW_REQUEST_TIME_WINDOW      =timedelta(seconds=30)
-HIGN_REQUEST_TIME_WINDOW     =timedelta(minutes=1)
-HIGN_LONG_REQUEST_TIME_WINDOW=timedelta(minutes=1)
-
+MYSQL_PASSWORD        ='123456'
 
 
 #--------------------------------预约设置---------------------------------
 # 每个用户每次抢座的间隔 s
 SUB_SLEEP_TIME        = 0.7
 
-# 如果预约失败 每个用户最大尝试次数
+# 如果预约失败，每个用户最大尝试 次数
 SUB_MAX_ATTEMPT       = 10
 
-# True预约明天座位  False预约今天座位
+# True预约明天座位 ， False预约今天座位
 RESERVE_NEXT_DAY      = True
 
 #--------------------------------检查设置---------------------------------
-# 检查开始时间
+# 检查开始时间07:40:00
 TIME_START_TIME   = "07:40:00"
 
-# 检查结束时间
+# 检查结束时间22:05:00
 TIME_END_TIME     = "22:05:00"
 
 # 每个用户每次检查间隔 s
