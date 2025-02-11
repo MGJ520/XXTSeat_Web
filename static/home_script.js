@@ -97,13 +97,15 @@ function loadContent(path) {
 }
 
 
-
-
 function activateButton(event) {
-    var buttons = document.querySelectorAll('.nav-button');
+    const buttons = document.querySelectorAll('.nav-button');
     buttons.forEach(function (button) {
         button.classList.remove('active');
     });
     event.target.classList.add('active');
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar.classList.contains('active')) {
+        sidebar.classList.remove('active');
+    }
 }
 

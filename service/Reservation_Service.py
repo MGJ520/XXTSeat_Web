@@ -119,10 +119,10 @@ class ReservationCheckService:
 
     def run_periodically(self, interval):
         while True:
-            logging.info(f"-----------------------------{get_current_hour()}--------------------------------")
             if not is_within_time_range(TIME_START_TIME, TIME_END_TIME):
-                print("Reached end time.不更新.")
+                logging.info("[Check] --------------------Reached end time.不更新.---------------------")
             else:
+                logging.info(f"-----------------------------{get_current_hour()}--------------------------------")
                 # 建立连接
                 db = DatabaseManager()
                 # 读取数据 获取用户信息
