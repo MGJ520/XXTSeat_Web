@@ -1,53 +1,39 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+<!doctype html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>文字头像生成器</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown-light.min.css">
     <style>
-        .avatar {
-            width: 100px;
-            height: 100px;
-            line-height: 100px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            border-radius: 50%;
-            background-color: #fff;
-            color: #ffffff;
-            border: 5px solid #000; /* 添加边框 */
-            overflow: hidden;
+        @media (max-width: 767px) {
+            body {
+                padding: 15px;
+            }
+        }
+
+        body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
         }
     </style>
+    <title>Marked.js</title>
 </head>
+
 <body>
+<div id="$m" class="markdown-body"></div>
 
-<div id="avatar" class="avatar"></div>
+<textarea id="$t" style="display:none">
+# Hello World
+*Write* `your` **Markdown** here.
+  </textarea>
 
-
-<script>
-    // 根据昵称生成颜色
-    function nicknameToColor(nickname) {
-        var hash = 0;
-        for (var i = 0; i < nickname.length; i++) {
-            hash = 31 * hash + nickname.charCodeAt(i);
-        }
-        var color = '#' + ((1 << 24) + (hash & 0xffffff)).toString(16).slice(1);
-        return color;
-    }
-
-    // 设置头像昵称和颜色
-    function setUserAvatar(nickname) {
-        var avatar = document.getElementById('avatar');
-        var color = nicknameToColor(nickname);
-        avatar.textContent = nickname.charAt(0).toUpperCase(); // 显示昵称的首字母大写
-        avatar.style.backgroundColor = color; // 设置背景颜色
-        avatar.style.borderColor = color; // 设置边框颜色
-        avatar.querySelector('.emoji').style.color = color; // 设置emoji颜色
-    }
-
-    // 示例：设置用户昵称为"张三"
-    setUserAvatar("张三");
-</script>
+<script>$m.innerHTML = marked.parse($t.value);</script>
 
 </body>
+
 </html>

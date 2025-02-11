@@ -38,8 +38,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
-// 示例：设置用户昵称为"张三"
-    setUserAvatar("张三");
+    getUserData().then(data => {
+        if (data) {
+            console.log(data);
+            //设置用户昵称
+            setUserAvatar(data.platformNickname);
+            updateProfileInfo('text-info', {
+                nickname: data.platformNickname,
+                email: data.platformEmail
+            });
+        } else {
+            console.log('No data available');
+        }
+    });
 });
 
 
@@ -130,7 +141,83 @@ function setUserAvatar(nickname) {
     avatar.textContent = nickname.charAt(0).toUpperCase(); // 显示昵称的首字母大写
     avatar.style.backgroundColor = color; // 设置背景颜色
     avatar.style.borderColor = color; // 设置边框颜色
-    avatar.querySelector('.emoji').style.color = color; // 设置emoji颜色
+}
+
+
+async function getUserData() {
+    try {
+        // 使用提供的fetch配置发起请求
+        const response = await fetch('/api/get/user_data', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        // 检查响应状态
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // 检查响应状态
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // 解析JSON响应
+        const userDataArray = await response.json();
+
+        // 确保返回的是一个数组，并且至少有一个元素
+        if (!Array.isArray(userDataArray) || userDataArray.length === 0) {
+            throw new Error('User data is not an array or is empty');
+        }
+
+        // 解构赋值，从数组中的第一个对象获取数据
+        const {
+            account_count = undefined,
+            last_login_time = undefined,
+            latest_login_ip = undefined,
+            login_count = undefined,
+            login_failure_count = undefined,
+            permission_level = undefined,
+            platform_account_time = undefined,
+            platform_email = undefined,
+            platform_nickname = undefined
+        } = userDataArray[0];
+        // 返回转换后的数据
+        return {
+            accountCount: account_count,
+            lastLoginTime: last_login_time,
+            latestLoginIp: latest_login_ip,
+            loginCount: login_count,
+            loginFailureCount: login_failure_count,
+            permissionLevel: permission_level,
+            platformAccountTime: platform_account_time,
+            platformEmail: platform_email,
+            platformNickname: platform_nickname
+        };
+    } catch
+        (error) {
+        // 错误处理
+        console.error('Failed to fetch user data:', error);
+        return null;
+    }
+}
+
+
+function updateProfileInfo(profileId, newInfo) {
+    // 获取包含昵称和电子邮件的div元素
+    const nicknameDiv = document.getElementById(profileId).querySelector('.nickname');
+    const emailDiv = document.getElementById(profileId).querySelector('.email');
+
+    // 检查元素是否存在
+    if (nicknameDiv && emailDiv) {
+        // 更新昵称和电子邮件内容
+        nicknameDiv.textContent = newInfo.nickname;
+        emailDiv.textContent = newInfo.email;
+    } else {
+        console.error('One or both elements were not found');
+    }
 }
 
 

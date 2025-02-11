@@ -567,3 +567,30 @@ class DatabaseManager:
             return []
         finally:
             self.close()
+
+    # 获取平台用户数据
+    def fetch_user_information(self, user_email=None):
+        try:
+            if user_email is None: return
+            self.connect()
+            # 执行查询操作，获取所有预约记录，如果提供了 user_email，则只获取该用户的记录
+            query_sql = """
+            SELECT platform_email, platform_nickname, platform_account_time,
+                   last_login_time, latest_login_ip, account_count, login_count, login_failure_count,
+                   permission_level 
+            FROM User
+            WHERE platform_email = %s
+            """
+            self.cursor.execute(query_sql, (user_email,))
+            # 获取所有记录
+            userdata = self.cursor.fetchall()
+            # 获取列名
+            col_names = [desc[0] for desc in self.cursor.description]
+            # 将元组转换为字典列表
+            user_list = [dict(zip(col_names, row)) for row in userdata]
+            return  user_list
+        except Exception as e:
+            print(f"查询用户记录时发生错误：{e}")
+            return None
+        finally:
+            self.close()

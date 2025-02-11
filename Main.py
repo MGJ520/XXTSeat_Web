@@ -68,7 +68,7 @@ def rate_limit_ip(service_name, max_requests, time_window):
 
             # 检查当前IP的请求次数
             if len(timestamps) >= max_requests:
-                return jsonify({"error": "Please slow down,(,,Ծ‸Ծ,, )"}), 429
+                return jsonify({"error": "Please slow down!"}), 429
 
             # 添加当前请求的时间戳
             timestamps.append(current_time)
@@ -161,6 +161,22 @@ def home():
             return render_template('home.html')  # 验证成功，渲染主页模板
     return redirect(url_for('login'))
 
+# 帮助
+@app.route('/help', methods=['GET', 'POST'])
+@rate_limit_ip('/help',LOW_MAX_REQUESTS, LOW_REQUEST_TIME_WINDOW)
+def help_page():
+    """
+    主页路由。
+    如果用户已登录（即请求头中包含有效的JWT），渲染主页模板。
+    否则，重定向到登录页面。
+    """
+    token = request.cookies.get('auth_token')  # 从Cookie中获取JWT
+    if token:
+        user_email = verify_jwt(token)  # 验证JWT
+        if user_email:
+            return render_template('help.html')  # 验证成功，渲染主页模板
+    return redirect(url_for('login'))
+
 
 # 登录页面
 @app.route('/login', methods=['GET', 'POST'])
@@ -246,6 +262,26 @@ def api_logout():
     response = make_response(jsonify({'success': True}))
     response.set_cookie('auth_token', '', expires=0)
     return response
+
+
+
+
+#获取用户信息
+@app.route('/api/get/user_data', methods=['GET'])
+@rate_limit_ip('/api/get/user_data',LOW_MAX_REQUESTS, LOW_REQUEST_TIME_WINDOW)
+def api_get_user_data():
+    token = request.cookies.get('auth_token')  # 从Cookie中获取JWT
+    if token:
+        user_email = verify_jwt(token)  # 验证JWT
+        if user_email:
+            db = DatabaseManager()
+            user_data=db.fetch_user_information(user_email)
+            if user_data is None:
+                return jsonify({'error': "User is none"}), 500
+            else:
+                return jsonify(user_data)
+    return jsonify({'success': False, 'error': 'Please login'})
+
 
 
 @app.route('/api/get/room_data', methods=['GET'])
