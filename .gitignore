@@ -1,4 +1,9 @@
 /.idea
+/.vscode
+################ Python #################
+__pycache__/
+
+
 
 ################ Linux ##################
 *~
@@ -40,3 +45,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+################# OSX ##################
+.DS_Store

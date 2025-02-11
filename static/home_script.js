@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     const buttons = document.querySelectorAll('.nav-button');
+
     buttons.forEach(function (button) {
         button.addEventListener('click', activateButton);
     });
@@ -36,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     });
+
 
 });
 

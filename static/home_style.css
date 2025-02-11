@@ -89,14 +89,15 @@ body {
 
 
 .user-card {
-    min-width: 300px;
     background-color: white;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
-    display: grid;
-    grid-template-rows: 50% 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
 }
 
@@ -105,6 +106,8 @@ body {
     
     width: 100%;
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     flex-wrap: wrap;
 
 }
@@ -124,7 +127,13 @@ body {
     color: #666;
 }
 
-
+.overview {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
 
 .status {
     width: 50%;
@@ -136,19 +145,15 @@ body {
 
 
 .btn-box {
-    max-width: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    border-radius: 5px;
-    border: dashed 1px;
-
+    display: grid;
+    grid-template-columns: 50% 50%;
 }
 
 
 button {
 
+    width: 100px;
+    height: 40px;
     margin: 5px;
     justify-content: center;
     align-items: center;
@@ -178,17 +183,25 @@ button:hover {
 
 
 
+.ishiden {
+    display: none;
+    opacity: 0;
+}
 
 
 .dialog-box {
-    width: 50vh;
-    height: auto;
-    z-index: 10000;
-    position: relative;
-    background-color: #ff3333;
+    width: max-content;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background-color: #f0f0f0;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    opacity: 1;
+    transition: 0.25s;
 }
 
 
