@@ -8,89 +8,153 @@
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
     <title>账户</title>
     <link href="/static/home_style.css" rel="stylesheet">
-    <link rel="stylesheet" href="/static/fontawesome.css">
-    <link rel="stylesheet" href="/static/solid.css">
+    <link rel="stylesheet" href="/static/CSS/fontawesome.css">
+    <link rel="stylesheet" href="/static/CSS/solid.css">
     <script src="/static/home_script.js"></script>
 </head>
-
 <body>
 
-    <div class="header">
-        <div>Microsoft 账户</div>
-        <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
-    </div>
-    <div class="container">
+<div class="header">
+    <div>Microsoft 账户</div>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
+</div>
+<div class="container">
 
-        <div class="sidebar" id="sidebar">
-            <button class="nav-button" data-path="/control-panel">控制面板</button>
-            <button class="nav-button" data-path="/accounts">账户</button>
-            <button class="nav-button">小黑屋</button>
-            <button class="nav-button" data-path="/subscriptions">订阅</button>
-            <button class="nav-button" data-path="/help">帮助</button>
-            <button class="nav-button" id="nav-button-logout">注销</button>
+    <div class="sidebar" id="sidebar">
+
+        <div class="avatar-container">
+            <div class="avatar-ring">
+                <div id="avatar" class="avatar">张</div>
+            </div>
+            <div class="text-info">
+                <div class="nickname">张三</div>
+                <div class="email">zhangsan@example.com</div>
+            </div>
         </div>
 
 
-        <div class="content" id="content">
+        <button class="nav-button" data-path="/control-panel">控制面板</button>
+        <button class="nav-button" data-path="/accounts">账户</button>
+        <button class="nav-button">小黑屋</button>
+        <button class="nav-button" data-path="/subscriptions">订阅</button>
+        <button class="nav-button" data-path="/help">帮助</button>
+        <button class="nav-button" id="nav-button-logout">注销</button>
+    </div>
 
-            <div class="top">
-                <h2>控制面板</h2>
-                <button>添加</button>
+
+    <div class="content" id="content">
+
+        <div class="top">
+            <h2>控制面板</h2>
+            <button id="add_button" class="add_button">添加</button>
+        </div>
+
+
+        <div class="user-card">
+
+            <div class="box overview">
+
+                <h2><i class="fa-solid fa-user"></i>username</h2>
+                <div class="status"></div>
+
             </div>
 
+            <div class="user-info">
 
-            <div class="user-card">
+                <div class="box">
 
-                <div class="box overview">
+                    <div class="info">
 
-                    <h2><i class="fa-solid fa-user"></i>Username</h2>
-                    <div class="status"></div>
-
-                </div>
-
-                <div class="user-info">
-
-                    <div class="box">
-
-                        <div class="info">
-
-                            <p>
-                                <i class="fa-solid fa-lock"></i>
-                                passwd
-                            </p>
-                            <p>
-                                <i class="fa-solid fa-clock"></i>
-                                预约时间
-                            </p>
-                            <p>
-                                <i class="fa-solid fa-couch"></i>
-                                预约座位
-                            </p>
-                        </div>
-
-                    </div>
-
-
-                    <div class="box">
-
-                        <div class="btn-box">
-                            <button onclick="">自动预约</button>
-                            <button onclick="">退坐</button>
-                            <button onclick="">修改</button>
-                            <button onclick="">删除</button>
-                        </div>
+                        <p>
+                            <i class="fa-solid fa-lock"></i>
+                            passwd
+                        </p>
+                        <p>
+                            <i class="fa-solid fa-clock"></i>
+                            预约时间
+                        </p>
+                        <p>
+                            <i class="fa-solid fa-couch"></i>
+                            预约座位
+                        </p>
                     </div>
 
                 </div>
 
-            </div>
 
+                <div class="box">
+
+                    <div class="btn-box">
+                        <button onclick="">自动预约</button>
+                        <button onclick="">退坐</button>
+                        <button onclick="">修改</button>
+                        <button onclick="">删除</button>
+                    </div>
+                </div>
+
+            </div>
 
         </div>
 
+        <div class="user-card">
+
+            <div class="box overview">
+                <div>
+                    <i class="fa-solid fa-user"></i>
+                    <h2>username</h2>
+                </div>
+                <p>
+
+                    预约密码
+                </p>
+                <div class="status"></div>
+
+            </div>
+
+            <div class="user-info">
+
+                <div class="box">
+
+                    <div class="info">
+
+                        <p>
+                            <i class="fa-solid fa-lock"></i>
+                            预约密码
+                        </p>
+                        <p>
+                            <i class="fa-solid fa-clock"></i>
+                            预约时间
+                        </p>
+                        <p>
+                            <i class="fa-solid fa-couch"></i>
+                            预约座位
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="box">
+
+                    <div class="btn-box">
+                        <button onclick="">自动预约</button>
+                        <button onclick="">退坐</button>
+                        <button onclick="">修改</button>
+                        <button onclick="">删除</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
     </div>
 
-<!--    <div class="dialog-box">-->
+</div>
+
+<!--    <div class="dialog-box ishiden" id="add_form">-->
 <!--        <h2>预约项目</h2>-->
 <!--        <form action="#" method="post">-->
 
@@ -115,7 +179,6 @@
 
 <!--        </form>-->
 <!--    </div>-->
-
 
 </body>
 

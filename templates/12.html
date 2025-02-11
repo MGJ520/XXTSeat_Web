@@ -2,40 +2,52 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>现代化HTML弹窗</title>
-    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <title>文字头像生成器</title>
+    <style>
+        .avatar {
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 50%;
+            background-color: #fff;
+            color: #ffffff;
+            border: 5px solid #000; /* 添加边框 */
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
 
-<!-- 弹窗按钮 -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-    打开弹窗
-</button>
+<div id="avatar" class="avatar"></div>
 
-<!-- 弹窗内容 -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">提示</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                这是一个现代化风格的HTML弹窗，您可以根据需要自定义内容和样式。
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary">确认</button>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- 引入Bootstrap JS和依赖的jQuery -->
-<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<script>
+    // 根据昵称生成颜色
+    function nicknameToColor(nickname) {
+        var hash = 0;
+        for (var i = 0; i < nickname.length; i++) {
+            hash = 31 * hash + nickname.charCodeAt(i);
+        }
+        var color = '#' + ((1 << 24) + (hash & 0xffffff)).toString(16).slice(1);
+        return color;
+    }
+
+    // 设置头像昵称和颜色
+    function setUserAvatar(nickname) {
+        var avatar = document.getElementById('avatar');
+        var color = nicknameToColor(nickname);
+        avatar.textContent = nickname.charAt(0).toUpperCase(); // 显示昵称的首字母大写
+        avatar.style.backgroundColor = color; // 设置背景颜色
+        avatar.style.borderColor = color; // 设置边框颜色
+        avatar.querySelector('.emoji').style.color = color; // 设置emoji颜色
+    }
+
+    // 示例：设置用户昵称为"张三"
+    setUserAvatar("张三");
+</script>
+
 </body>
 </html>

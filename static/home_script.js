@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     const buttons = document.querySelectorAll('.nav-button');
+
     buttons.forEach(function (button) {
         button.addEventListener('click', activateButton);
     });
@@ -37,6 +38,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
+// 示例：设置用户昵称为"张三"
+    setUserAvatar("张三");
 });
 
 
@@ -108,4 +111,26 @@ function activateButton(event) {
         sidebar.classList.remove('active');
     }
 }
+
+
+// 根据昵称生成颜色
+function nicknameToColor(nickname) {
+    var hash = 0;
+    for (var i = 0; i < nickname.length; i++) {
+        hash = 31 * hash + nickname.charCodeAt(i);
+    }
+    var color = '#' + ((1 << 24) + (hash & 0xffffff)).toString(16).slice(1);
+    return color;
+}
+
+// 设置头像昵称和颜色
+function setUserAvatar(nickname) {
+    var avatar = document.getElementById('avatar');
+    var color = nicknameToColor(nickname);
+    avatar.textContent = nickname.charAt(0).toUpperCase(); // 显示昵称的首字母大写
+    avatar.style.backgroundColor = color; // 设置背景颜色
+    avatar.style.borderColor = color; // 设置边框颜色
+    avatar.querySelector('.emoji').style.color = color; // 设置emoji颜色
+}
+
 

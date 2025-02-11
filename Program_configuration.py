@@ -11,7 +11,7 @@ WEB_SERVER_PORT       =80
 # 设置请求时间窗口和最大请求次数
 LOW_REQUEST_TIME_WINDOW = timedelta(seconds=30)
 # 最大请求次数
-LOW_MAX_REQUESTS        = 10
+LOW_MAX_REQUESTS        = 30
 
 # 设置请求时间窗口和最大请求次数
 MIN_REQUEST_TIME_WINDOW = timedelta(seconds=30)
