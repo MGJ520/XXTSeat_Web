@@ -5,7 +5,7 @@ from mysql.connector import Error
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from Program_configuration import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD
+from config import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD
 
 
 class DatabaseManager:
@@ -588,9 +588,56 @@ class DatabaseManager:
             col_names = [desc[0] for desc in self.cursor.description]
             # 将元组转换为字典列表
             user_list = [dict(zip(col_names, row)) for row in userdata]
-            return  user_list
+            return user_list
         except Exception as e:
             print(f"查询用户记录时发生错误：{e}")
             return None
         finally:
             self.close()
+
+    # 获取平台用户数据
+    def update_user_profile(self, user_email=None, new_nickname=None, new_password=None):
+        try:
+            if user_email is None or new_password is None or new_nickname is None: return False
+            self.connect()
+            self.conn.cursor(prepared=True)
+            hashed_password = generate_password_hash(new_password)
+            print(hashed_password,new_password,new_nickname,user_email)
+            self.cursor.execute("""
+            UPDATE User
+            SET platform_nickname = %s, platform_password = %s
+            WHERE platform_email = %s
+        """, (new_nickname, hashed_password, user_email))
+            self.conn.commit()  # 提交事务
+            if self.cursor.rowcount == 0:
+                return False
+            else:
+                return True
+        except Exception as e:
+            print(f"更新用户记录时发生错误：{e}")
+            return False
+        finally:
+            self.close()
+
+    def check_reservation_account_exists(self, reservation_account):
+        """检查reservation_account是否已存在"""
+        check_account_query = """
+        SELECT reservation_account FROM Reservation WHERE reservation_account = %s;
+        """
+        self.cursor.execute(check_account_query, (reservation_account,))
+        return self.cursor.fetchone() is not None
+
+    def check_time_overlap(self, room_location, seat_location, start_time, end_time):
+        """检查指定房间和座位是否存在时间重叠"""
+        check_overlap_query = """
+        SELECT * FROM Reservation
+        WHERE room_location = %s AND seat_location = %s
+        AND (
+            (start_time < %s AND end_time > %s) OR
+            (start_time < %s AND end_time > %s) OR
+            (start_time >= %s AND end_time <= %s)
+        );
+        """
+        self.cursor.execute(check_overlap_query, (
+        room_location, seat_location, start_time, start_time, end_time, end_time, start_time, end_time))
+        return self.cursor.fetchone() is not None

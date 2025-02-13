@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Profile</title>
+    <script src="/accounts_script.js" defer></script>
+    <link rel="stylesheet" href="/accounts_style.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+<body>
+
+<div class="top">
+    <p>个人信息</p>
+</div>
+<div class="card user-card user-show" id="userInfo">
+    <h2>用户信息</h2>
+    <br>
+    <label>昵称</label>
+    <p id="platformNickname"></p>
+    <br>
+    <label>邮箱</label>
+    <p id="platformEmail"></p>
+    <label>类型</label>
+    <p id="permissionLevel"></p>
+</div>
+
+<div class="card user-card user-show" id="loginInfo">
+    <h2>登录信息</h2>
+    <br>
+    <label>上次登录时间</label>
+    <p id="lastLoginTime"></p>
+    <br>
+    <label>上次登录IP</label>
+    <p id="latestLoginIp"></p>
+    <label>登录次数</label>
+    <p id="loginCount"></p>
+    <label>登录失败次数</label>
+    <p id="loginFailureCount"></p>
+</div>
+
+<div class="card user-card update-user">
+    <h2>更新信息</h2>
+    <br>
+    <label for="nickname">新昵称:</label>
+    <input type="text" id="nickname" name="nickname" required>
+    <br>
+    <label for="password">新密码:</label>
+    <input type="password" id="password" name="password" required>
+    <br>
+    <label for="confirm-password">确认密码:</label>
+    <input type="password" id="confirm-password" name="confirm-password" required>
+    <br>
+    <input type="button" value="上传设置" id="updateSettingsBtn">
+</div>
+
+<script>
+
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>主页</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <!--   js文件-->
+    <script src="/panel_script.js"></script>
+    <!--   css文件-->
+    <link rel="stylesheet" href="/panel_style.css">
+
+</head>
+
+<body>
+
+
+<div class="top">
+    <p>控制面板</p>
+    <button id="add_button" class="add_button"> 添加</button>
+</div>
+
+
+<div class="card user-card">
+
+    <div class="box overview">
+        <div class="simple">
+            <div class="simple-1">
+                <i class="fa-solid fa-user"></i>
+                <p>预约账户</p>
+            </div>
+
+            <div id="show-account">
+                <p>15795126651</p>
+            </div>
+        </div>
+
+
+        <div class="status"><h2 class="status-text">学习中</h2></div>
+
+    </div>
+
+    <div class="user-info">
+
+
+        <div class="info">
+            <div class="info-text">
+                <p>
+                    <i class="fa-solid fa-lock"></i>
+                    预约密码
+                </p>
+                <p id="show-password">
+                    ***********
+                </p>
+            </div>
+            <div class="info-text">
+                <p>
+                    <i class="fa-solid fa-clock"></i>
+                    预约时间
+                </p>
+                <p id="show-time">
+                    12:00-15.00
+                </p>
+            </div>
+            <div class="info-text">
+                <p>
+                    <i class="fa-solid fa-couch"></i>
+                    预约座位
+                </p>
+                <p id="show-room-seat">
+                    一教505
+                </p>
+            </div>
+        </div>
+
+
+        <div class="box">
+
+            <div class="btn-box">
+                <button onclick="">自动预约</button>
+                <button onclick="">退坐</button>
+                <button onclick="">修改</button>
+                <button onclick="">删除</button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- 弹窗内容 -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <div class="input-group-top">
+            <h2>预约项</h2>
+            <span class="close">&times;</span>
+        </div>
+
+        <div class="input-group-add">
+            <br>
+            <label>预约账户</label>
+            <input type="text" id="reservation_account">
+            <br>
+            <label>预约密码</label>
+            <input type="text" id="reservation_password">
+            <br>
+            <label>预约时间</label>
+            <div id="time-slots"></div>
+
+            <br>
+            <label>预约座位</label>
+            <div class="input-group-seat">
+                <label>
+                    <select id="room_select" required onchange="updateSeats(this.value)">
+                        <option value="">选择房间</option>
+                    </select>
+                    <!-- 隐藏的输入字段，用于存储房间的ID -->
+                    <input type="hidden" id="roomId" name="roomId">
+                </label>
+                <label>
+                    <select id="seat_show_num">
+                        <option value="">请先选择房间</option>
+                    </select>
+                </label>
+            </div>
+
+        </div>
+        <br>
+        <div class="input-group-bottom">
+            <button type="button" onclick="SyncData()">保存</button>
+            <button type="button" onclick="document.getElementById('myModal').style.display='none'">取消</button>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

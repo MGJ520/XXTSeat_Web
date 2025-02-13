@@ -1,0 +1,12 @@
+验证码
+https://szpt.hnust.edu.cn/Account/GetValidateCode?i=0.7
+
+登录
+https://szpt.hnust.edu.cn/Account/Login
+参数
+yhdm=%E8%A2%81%E5%BF%97%E6%95%8F
+&yhmm=2155010601
+&valiCode=1135
+
+信息
+https://szpt.hnust.edu.cn/Account/LoginInfo

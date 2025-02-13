@@ -4,7 +4,7 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 
-from Program_configuration import TIME_Check_TIME, TIME_MAX_ATTEMPT, TIME_SLEEP_TIME, TIME_START_TIME, TIME_END_TIME
+from config import TIME_Check_TIME, TIME_MAX_ATTEMPT, TIME_SLEEP_TIME, TIME_START_TIME, TIME_END_TIME
 from utils.Database_Function import DatabaseManager
 from utils.Xxt_WebApi import XxTWebApi
 from utils.General_Function import is_tomorrow, get_current_hour, \

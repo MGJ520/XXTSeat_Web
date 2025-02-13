@@ -3,7 +3,7 @@ import logging
 
 from concurrent.futures import ThreadPoolExecutor
 
-from Program_configuration import SUB_SLEEP_TIME, SUB_MAX_ATTEMPT, RESERVE_NEXT_DAY
+from config import SUB_SLEEP_TIME, SUB_MAX_ATTEMPT, RESERVE_NEXT_DAY
 from utils.Database_Function import DatabaseManager
 from utils.Xxt_WebApi import XxTWebApi
 from utils.General_Function import get_user_credentials

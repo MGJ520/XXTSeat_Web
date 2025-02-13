@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动态添加用户卡片</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .simple-1 {
+            display: flex;
+            align-items: center;
+        }
+        .simple-1 i {
+            margin-right: 5px;
+        }
+        .info-text {
+            display: flex;
+            justify-content: space-between;
+        }
+        .info-text p {
+            margin: 0;
+        }
+        .btn-box {
+            display: flex;
+            gap: 5px;
+        }
+        .btn-box button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        .btn-box button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // 用户数据示例
+        const userData = [
+            {
+                account: "15795126651",
+                password: "123456",
+                time: "12:00-15:00",
+                roomSeat: "一教505"
+            },
+            {
+                account: "13800138000",
+                password: "654321",
+                time: "14:00-17:00",
+                roomSeat: "二教202"
+            }
+        ];
+
+        // 动态添加用户卡片的函数
+        function addUserCard(data) {
+            const body = document.body;
+
+            // 创建卡片容器
+            const card = document.createElement("div");
+            card.className = "card user-card";
+
+            // 创建卡片内容
+            card.innerHTML = `
+                <div class="box overview">
+                    <div class="simple">
+                        <div class="simple-1">
+                            <i class="fa-solid fa-user"></i>
+                            <p>预约账户</p>
+                        </div>
+                        <div id="show-account">
+                            <p>${data.account}</p>
+                        </div>
+                    </div>
+                    <div class="status"></div>
+                </div>
+
+                <div class="user-info">
+                    <div class="info">
+                        <div class="info-text">
+                            <p><i class="fa-solid fa-lock"></i> 预约密码</p>
+                            <p id="show-password">${data.password}</p>
+                        </div>
+                        <div class="info-text">
+                            <p><i class="fa-solid fa-clock"></i> 预约时间</p>
+                            <p id="show-time">${data.time}</p>
+                        </div>
+                        <div class="info-text">
+                            <p><i class="fa-solid fa-couch"></i> 预约座位</p>
+                            <p id="show-room-seat">${data.roomSeat}</p>
+                        </div>
+                    </div>
+                    <div class="box">
+                        <div class="btn-box">
+                            <button onclick="alert('自动预约功能未实现')">自动预约</button>
+                            <button onclick="alert('退坐功能未实现')">退坐</button>
+                            <button onclick="alert('修改功能未实现')">修改</button>
+                            <button onclick="alert('删除功能未实现')">删除</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 将卡片添加到 body 中
+            body.appendChild(card);
+        }
+
+        // 遍历用户数据并添加卡片
+        userData.forEach(user => {
+            addUserCard(user);
+        });
+    </script>
+</body>
+</html>

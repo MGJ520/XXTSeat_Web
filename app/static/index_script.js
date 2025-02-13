@@ -1,3 +1,32 @@
+const startTime = 8; // 开始时间
+const endTime = 22; // 结束时间
+const maxDuration = 4; // 最长选择时长（小时）
+let timeSlots = []; // 存储时间段
+let selectedSlots = []; // 存储正式选中的时间段
+let highlightedSlots = []; // 存储高亮提示的时间段
+let firstSelectedIndex = null; // 记录第一个选中的时间点索引
+let selectedStart = [];
+let selectedEnd = [];
+let userData = [];
+let roomData = [];
+// 示例数据
+const data = [
+    {
+        account: "15795126651",
+        password: "123456",
+        time: "12:00-15:00",
+        roomSeat: "一教505",
+        status: "学习中"
+    },
+    {
+        account: "13800138000",
+        password: "654321",
+        time: "10:00-12:00",
+        roomSeat: "二教303",
+        status: "已完成"
+    }
+];
+
 document.addEventListener('DOMContentLoaded', function () {
 
 
@@ -40,17 +69,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     getUserData().then(data => {
         if (data) {
-            console.log(data);
             //设置用户昵称
             setUserAvatar(data.platformNickname);
             updateProfileInfo('text-info', {
                 nickname: data.platformNickname,
                 email: data.platformEmail
             });
+            userData = data;
         } else {
             console.log('No data available');
         }
     });
+    document.querySelector('.nav-button[data-path="/control-panel"]').click();
 });
 
 
@@ -64,6 +94,13 @@ function toggleSidebar() {
 }
 
 function loadContent(path) {
+
+    timeSlots = []; // 存储时间段
+    selectedSlots = []; // 存储正式选中的时间段
+    highlightedSlots = []; // 存储高亮提示的时间段
+    firstSelectedIndex = null; // 记录第一个选中的时间点索引
+    selectedTimeRange = [];
+
     fetch(path)
         .then(response => {
             if (!response.ok) {
@@ -75,7 +112,7 @@ function loadContent(path) {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
 
-            // 加载 CSS 文件
+            // 加载 lib 文件
             const styles = Array.from(doc.querySelectorAll('link[rel="stylesheet"]'));
             styles.forEach(link => {
                 const style = document.createElement('link');
@@ -106,7 +143,7 @@ function loadContent(path) {
         })
         .catch(error => {
             console.error('There has been a problem with your fetch operation:', error);
-            document.getElementById('content').innerHTML = '<p>Error loading content.</p>';
+            document.getElementById('content').innerHTML = '<p>Under development.</p>';
         });
 }
 
@@ -146,6 +183,11 @@ function setUserAvatar(nickname) {
 
 async function getUserData() {
     try {
+        // permissionLevel
+        // 0用户0
+        // 1用户1
+        // 2用户2
+        // 3管理员A3
         // 使用提供的fetch配置发起请求
         const response = await fetch('/api/get/user_data', {
             method: 'GET',

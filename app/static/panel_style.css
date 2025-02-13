@@ -1,0 +1,287 @@
+
+.card.user-card .btn-box {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+}
+
+.card {
+    border-radius: 10px;
+}
+
+.user-info {
+    width: 80%;
+    margin: 30px;
+    display: flex;
+    align-self: center;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.info {
+    width: 100%;
+    display: flex;
+}
+
+.info-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 3px;
+}
+
+.simple {
+    width: 100%;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.simple-1 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.simple-1 p {
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.simple p {
+    font-weight: bold;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+
+.card p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.user-info p i {
+    min-width: 20px;
+}
+
+.overview {
+    margin: 30px;
+    width: 80%;
+    display: flex;
+    align-self: center;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+}
+
+.status {
+    width: 100%;
+    height: 50px;
+    align-content: center;
+    margin: 10px;
+    align-self: center;
+    background-color: rgba(0, 112, 13, 0.6);
+    border-radius: 5px;
+    display: flex; /* 使用flex布局 */
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+}
+
+.status-text {
+    align-self: center;
+    color: white;
+}
+
+/* 弹窗样式 */
+.modal {
+    display: none; /* 默认隐藏 */
+    position: fixed; /* 固定位置 */
+    z-index: 1; /* 确保在最顶层 */
+    left: 0;
+    top: 0;
+    width: 100%; /* 全宽 */
+    height: 100%; /* 全高 */
+    overflow: auto; /* 如果内容过长，允许滚动 */
+    background-color: rgb(0, 0, 0); /* 背景颜色 */
+    background-color: rgba(0, 0, 0, 0.4); /* 半透明背景 */
+}
+
+/* 弹窗内容样式 */
+.modal-content {
+    display: flex;
+    max-width: 500px;
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%;
+    flex-direction: column;
+}
+
+.input-group-top {
+    display: flex;
+    justify-content: space-between;
+}
+
+.input-group-add {
+    display: grid;
+}
+
+/* 关闭按钮样式 */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+.time-picker {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.time-slot {
+    max-width: 80px;
+    min-height: 40px;
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    font-size: 12px; /* 缩小字体 */
+    width: calc(30% - 10px); /* 每列的宽度 */
+    display: inline-block; /* 使时间框在一行内排列 */
+
+}
+
+label {
+    margin-bottom: 8px;
+}
+
+.selected {
+    background-color: #006fc9;
+    color: white;
+}
+
+.highlight {
+    background-color: #ccc; /* 暗灰色提示 */
+    color: black;
+    animation: highlightAnimation 0.5s forwards; /* 添加高亮动画 */
+}
+
+@keyframes highlightAnimation {
+    0% {
+        background-color: #bdbdbd;
+    }
+    100% {
+        background-color: #dcdcdc; /* 高亮结束后的背景色 */
+    }
+}
+
+#time-slots {
+    display: flex;
+
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.input-group-add input {
+
+}
+
+.input-group-seat {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.input-group-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    flex-direction: row;
+}
+
+@media (max-width: 768px) {
+    .card.user-card .btn-box {
+        flex-wrap: wrap;
+    }
+
+    input {
+        margin: 0;
+    }
+
+    .modal-content button {
+        border-radius: 0;
+    }
+
+    .overview {
+        /*flex-direction: column-reverse;*/
+        align-items: flex-start;
+        margin-bottom: 5px;
+    }
+
+    .info {
+        justify-content: space-between;
+    }
+
+    .user-info {
+        margin-top: 0;
+    }
+
+    .status {
+        width: 100%;
+        margin: 2px;
+    }
+
+    .simple {
+        font-size: 15px;
+        margin: 3px;
+    }
+
+    .simple-1 i {
+        visibility: hidden;
+        width: 0;
+
+    }
+
+    .info-text {
+        font-size: 15px;
+    }
+
+    .add_button {
+        height: 50%;
+        width: 20%;
+    }
+
+    .modal-content {
+
+        width: 85%;
+    }
+
+    #time-slots {
+        width: auto;
+    }
+
+    .time-slot {
+        max-width: 55px;
+        min-height: 20px;
+
+        margin: 2px;
+        border-radius: 4px;
+    }
+}

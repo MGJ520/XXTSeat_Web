@@ -1,3 +1,5 @@
+
+
 function pustSignIn() {
     event.preventDefault();
 
@@ -22,7 +24,7 @@ function pustSignIn() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                window.location.href = '/home';
+                window.location.href = '/index';
             } else {
                 document.getElementById('login_error').innerText = data.error;
             }
