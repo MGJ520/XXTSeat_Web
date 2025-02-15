@@ -38,8 +38,17 @@ function init_all() {
         document.getElementById('time-slots').appendChild(slotDiv);
     });
 
-    fetchRoomData();
-    addCardsToContent(data); // 将示例数据动态生成模块并插入页面
+
+    fetchReservations().then(r => {
+        const room_select = document.getElementById('room_select');
+        roomData.forEach(room => {
+            const option = document.createElement('option');
+            option.value = room[2];
+            option.textContent = room[2];
+            room_select.appendChild(option);
+        });
+    });
+
 
 }
 
@@ -169,24 +178,6 @@ function highlightTimeRange(start, end) {
 }
 
 
-// 获取房间数据的函数
-function fetchRoomData() {
-    fetch('/api/get/room_data')
-        .then(response => response.json())
-        .then(data => {
-            roomData = data; // 保存房间数据到全局变量
-            const room_select = document.getElementById('room_select');
-            data.forEach(room => {
-                const option = document.createElement('option');
-                option.value = room[2];
-                option.textContent = room[2];
-                room_select.appendChild(option);
-            });
-        })
-        .catch(error => console.error('Error fetching room data:', error));
-}
-
-
 // 根据选定的房间更新座位选项的函数
 function updateSeats(selectedRoomName) {
     var seatsSelect = document.getElementById('seat_show_num');
@@ -304,9 +295,7 @@ function SyncData() {
 }
 
 
-// 封装生成模块的函数
 function createUserCard(data) {
-    // 创建一个模块容器
     const card = document.createElement("div");
     card.className = "card user-card";
 
@@ -331,30 +320,54 @@ function createUserCard(data) {
             <div class="info">
                 <div class="info-text">
                     <p><i class="fa-solid fa-lock"></i> 预约密码</p>
-                    <p id="show-password">***********</p>
+                    <p class="password-toggle" data-password="${data.password}" title="点击切换显示密码" >***********</p>
                 </div>
                 <div class="info-text">
                     <p><i class="fa-solid fa-clock"></i> 预约时间</p>
                     <p id="show-time">${data.time}</p>
                 </div>
                 <div class="info-text">
-                    <p><i class="fa-solid fa-couch"></i> 预约座位</p>
-                    <p id="show-room-seat">${data.roomSeat}</p>
+                    <p><i class="fa-solid fa-couch"></i> 预约房间</p>
+                    <p id="show-room-seat">${data.room_seat}</p>
+                </div>
+                <div class="info-text">
+                    <p><i class="fa-solid fa-chair"></i></i> 预约座位</p>
+                    <p id="show-room-seat">${data.seat_id}座位</p>
                 </div>
             </div>
             <div class="box">
                 <div class="btn-box">
-                    <button onclick="autoReserve()">自动预约</button>
-                    <button onclick="releaseSeat()">退坐</button>
-                    <button onclick="editInfo()">修改</button>
+                    <button onclick="service(this)">服务</button>
+                    <button onclick="releaseSeat(this)">退座</button>
+                    <button onclick="editInfo(this)">修改</button>
                     <button onclick="deleteCard(event)">删除</button>
                 </div>
             </div>
         </div>
     `;
 
-    // 返回生成的模块
+    // 为密码切换功能添加事件监听
+    const passwordToggle = card.querySelector(".password-toggle");
+    passwordToggle.addEventListener("click", function () {
+        const realPassword = this.getAttribute("data-password");
+        const currentText = this.textContent;
+
+        if (currentText === "***********") {
+            this.textContent = realPassword; // 显示真实密码
+        } else {
+            this.textContent = "***********"; // 隐藏密码
+        }
+    });
+
+    // 根据状态设置背景颜色
+    const statusDiv = card.querySelector(".status");
+    const statusColor = statusColors[data.status];
+    if (statusColor) {
+        statusDiv.style.backgroundColor = statusColor;
+    }
+
     return card;
+
 }
 
 // 动态添加模块到指定位置的函数
@@ -379,3 +392,117 @@ function addCardsToContent(dataArray) {
         contentContainer.insertBefore(card, topElement.nextSibling); // 插入到 <div class="top"> 的下一个兄弟元素之前
     });
 }
+
+function service() {
+    alert("服务功能尚未实现！");
+}
+
+function releaseSeat() {
+    alert("退坐功能尚未实现！");
+}
+
+function editInfo() {
+    alert("修改功能尚未实现！");
+}
+
+function deleteCard(event) {
+
+    const card = event.target.closest(".card");
+    // 获取当前点击的按钮
+    const button = event.target;
+
+    // 找到按钮所在的卡片（向上查找直到找到 class="card user-card" 的元素）
+    const user_card = button.closest(".card.user-card");
+
+    // 从卡片中提取 data.account 等信息
+    const account = user_card.querySelector("#show-account p").textContent;
+    const time = user_card.querySelector("#show-time").textContent;
+    const roomSeat = user_card.querySelector("#show-room-seat").textContent;
+    // 弹出确认对话框
+    const isConfirmed = confirm(`确定要删除以下预约信息吗？\n\n预约账户: ${account}\n预约时间: ${time}\n预约位置: ${roomSeat}`);
+
+    // 如果用户确认删除
+    if (!isConfirmed) {
+        return;
+    }
+    // 创建要发送到服务器的数据对象
+    const dataToDelete = {
+        account: account
+    };
+
+    if (card) {
+        // 发送删除请求到服务器
+        fetch('/api/delete/reservation', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataToDelete),
+        }).then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    // 添加动画类
+                    card.classList.add("shrink-and-fade"); // 缩小并淡出1
+                    // card.classList.add("slide-out-right"); // 滑出
+                    // 设置一个短暂的延迟，等待动画完成后再删除
+                    setTimeout(() => {
+                        card.remove();
+                    }, 300); // 动画时长为 0.3s，延迟 300ms
+                } else {
+                    // 处理失败情况
+                    alert('删除失败: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting seat:', error);
+                alert('发生错误，请稍后再试。');
+            });
+    }
+}
+
+// 根据 room_id 查找房间名称
+function findRoomName(roomId) {
+    // 尝试将 roomId 转换为数字
+    const roomIdNum = Number(roomId);
+
+    // 查找房间信息，确保 roomIdNum 是数字
+    const roomInfo = roomData.find(room => Number(room[1]) === roomIdNum);
+    return roomInfo ? roomInfo[2] : '未知房间';
+}
+
+
+async function fetchReservations() {
+    return fetch('/api/get/reservation', {
+        method: 'GET',
+        credentials: 'include'  // 确保cookies被发送
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // console.log(data.data);
+                // 处理数据，例如更新页面内容
+                reservationsData = data.data.map(item => ({
+                    account: item.username,
+                    password: item.password,
+                    time: `${item.time[0]}-${item.time[1]}`,
+                    room_seat: findRoomName(item.room_id),
+                    seat_id: item.seat_id[0],
+                    // status: status[item.account_status] || '未知状态'
+                    status: item.account_status || '未知状态'
+                }));
+                addCardsToContent(reservationsData)
+            } else {
+                // alert(data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching reservations:', error);
+        });
+}
+
+

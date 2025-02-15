@@ -10,22 +10,36 @@ let selectedEnd = [];
 let userData = [];
 let roomData = [];
 // 示例数据
-const data = [
+let reservationsData = [
     {
         account: "15795126651",
         password: "123456",
         time: "12:00-15:00",
-        roomSeat: "一教505",
+        room_seat: "一教505",
+        seat_id: "001",
         status: "学习中"
     },
     {
         account: "13800138000",
         password: "654321",
         time: "10:00-12:00",
-        roomSeat: "二教303",
+        room_seat: "二教303",
+        seat_id: "003",
         status: "已完成"
     }
 ];
+
+let statusColors = {
+    '违约': '#FF4D4D',       // 红色
+    '待履约': '#FFA500',    // 黄色
+    '学习中': '#4CAF50',     // 绿色
+    '已履约': '#2E8B57',    // 深绿色
+    '暂离中': '#FFA500',     // 橙色
+    '被监督中': '#FF69B4',   // 粉红色
+    '已取消': '#808080',     // 灰色
+    '密码错误': '#FF4500',   // 深红色
+    '等待更新': '#00BFFF'    // 天蓝色
+};
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -63,8 +77,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
             .catch(error => console.error('Error:', error));
-
-
     });
 
     getUserData().then(data => {
@@ -80,7 +92,10 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('No data available');
         }
     });
+
     document.querySelector('.nav-button[data-path="/control-panel"]').click();
+
+    fetchRoomData();
 });
 
 
@@ -263,3 +278,14 @@ function updateProfileInfo(profileId, newInfo) {
 }
 
 
+// 获取房间数据的函数
+function fetchRoomData() {
+    fetch('/api/get/room_data')
+        .then(response => response.json())
+        .then(data => {
+            roomData = data; // 保存房间数据到全局变量
+            // console.log(data);
+
+        })
+        .catch(error => console.error('Error fetching room data:', error));
+}

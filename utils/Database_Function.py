@@ -5,7 +5,8 @@ from mysql.connector import Error
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from config import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD
+from config import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, status
+from utils.General_Function import format_timedelta
 
 
 class DatabaseManager:
@@ -532,7 +533,7 @@ class DatabaseManager:
             self.connect()
             # 执行查询操作，获取所有预约记录，如果提供了 user_email，则只获取该用户的记录
             query_sql = """
-            SELECT reservation_account, reservation_password, start_time, end_time, room_location, seat_location, refresh_status, reservation_status 
+            SELECT reservation_account, reservation_password, start_time, end_time, room_location, seat_location, refresh_status, reservation_status,account_status
             FROM Reservation
             {}
             """.format("WHERE platform_email = %s" if user_email else "")
@@ -544,9 +545,11 @@ class DatabaseManager:
             appointments_data = []
             # 遍历查询结果，将每条记录转换为所需的字典格式
             for row in rows:
+                # print(row)
                 # 检查时间字段是否为 datetime.time 类型
-                start_time_str = row[2].strftime('%H:%M') if isinstance(row[2], (time, datetime)) else str(row[2])[:5]
-                end_time_str = row[3].strftime('%H:%M') if isinstance(row[3], (time, datetime)) else str(row[3])[:5]
+                # 使用改进后的逻辑
+                start_time_str = format_timedelta(row[2])
+                end_time_str = format_timedelta(row[3])
 
                 # 将seat_location转换为三位数的字符串格式
                 seat_location_str = f"{int(row[5]):03d}"  # 确保转换为整数后再格式化
@@ -555,11 +558,13 @@ class DatabaseManager:
                     "username": row[0],
                     "password": row[1],
                     "time": [start_time_str, end_time_str],
-                    "roomid": str(row[4]),  # 假设room_location是整数类型
-                    "seatid": [seat_location_str],  # 确保seatid是三位数的字符串格式
-                    "daysofweek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-                    'is_auto_reservation': row[7]
+                    "room_id": str(row[4]),  # 假设room_location是整数类型
+                    "seat_id": [seat_location_str],  # 确保seatid是三位数的字符串格式
+                    "day_week": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                    'is_auto_reservation': row[7],
+                    'account_status':status[str(row[8])] or '未知状态'
                 }
+                # print(appointments_data)
                 appointments_data.append(appointment)
             return appointments_data
         except Exception as e:
@@ -627,6 +632,21 @@ class DatabaseManager:
         self.cursor.execute(check_account_query, (reservation_account,))
         return self.cursor.fetchone() is not None
 
+    def check_email_reservation_account_exists(self, email, reservation_account):
+        """
+        检查指定用户的 reservation_account 是否已存在
+        :param email: 用户的邮箱地址
+        :param reservation_account: 需要检查的预约账号
+        :return: 如果存在返回 True，否则返回 False
+        """
+        check_account_query = """
+        SELECT reservation_account 
+        FROM Reservation 
+        WHERE platform_email = %s AND reservation_account = %s;
+        """
+        self.cursor.execute(check_account_query, (email, reservation_account))
+        return self.cursor.fetchone() is not None
+
     def check_time_overlap(self, room_location, seat_location, start_time, end_time):
         """检查指定房间和座位是否存在时间重叠"""
         check_overlap_query = """
@@ -641,3 +661,23 @@ class DatabaseManager:
         self.cursor.execute(check_overlap_query, (
         room_location, seat_location, start_time, start_time, end_time, end_time, start_time, end_time))
         return self.cursor.fetchone() is not None
+
+    def delete_reservation_account(self, email, reservation_account):
+        """
+        删除指定用户的 reservation_account 数据
+        :param email: 用户的邮箱地址
+        :param reservation_account: 需要删除的预约账号
+        :return: 删除结果信息
+        """
+        # 删除记录
+        delete_account_query = """
+        DELETE FROM Reservation 
+        WHERE platform_email = %s AND reservation_account = %s;
+        """
+        try:
+            self.cursor.execute(delete_account_query, (email, reservation_account))
+            self.conn.commit()  # 提交事务
+            return f"成功删除预约账号：{reservation_account}，属于用户：{email}"
+        except Exception as e:
+            self.conn.rollback()  # 回滚事务
+            return f"删除失败：{str(e)}"

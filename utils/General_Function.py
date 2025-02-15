@@ -211,6 +211,7 @@ def get_local_ip():
     Returns:
         str: 本机的内网IP地址，如果无法获取则返回None
     """
+    s=[]
     try:
         # 创建一个UDP套接字
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -225,3 +226,12 @@ def get_local_ip():
     finally:
         # 确保套接字被关闭
         s.close()
+
+def format_timedelta(td):
+    """将 timedelta 转换为 'HH:MM' 格式"""
+    if isinstance(td, timedelta):
+        hours, remainder = divmod(td.seconds, 3600)
+        minutes, _ = divmod(remainder, 60)
+        return f"{hours:02d}:{minutes:02d}"
+    else:
+        return "00:00"  # 默认值

@@ -63,7 +63,7 @@ class ReservationCheckService:
         # 这里是单个用户登录并尝试预约的逻辑
         # 解包用户信息，包括用户名、密码、预约时间、房间ID、座位ID和预约星期
         db = DatabaseManager()
-        username, password, times, roomid, seatid, daysofweek,is_auto_reservation = user.values()
+        username, password, times, room_id, seat_id, day_week,is_auto_reservation ,account_status= user.values()
         # 尝试预约
         # logging.info(f" ---- [Try_Check] - {username}  ---- ")
         s = XxTWebApi(sleep_time=self.TIME_SLEEP_TIME, max_attempt=self.TIME_MAX_ATTEMPT, reserve_next_day=self.TIME_RESERVE_NEXT_DAY)

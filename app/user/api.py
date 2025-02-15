@@ -200,3 +200,42 @@ def new_reservation():
                 # 如果在保存预约时发生错误，返回错误信息
                 return jsonify({'success': False, 'message': str(e)}), 500
     return jsonify({'success': False, 'error': 'Please login'})
+
+
+@user.route('/api/get/reservation', methods=['GET'])
+def get_reservation():
+    token = request.cookies.get('auth_token')
+    if token:
+        user_email = verify_jwt(token)
+        if user_email:
+            db_manager = DatabaseManager()
+            data = db_manager.fetch_check_information(user_email)
+            return jsonify({"success": True, "data": data})
+    return jsonify({'success': False, 'error': 'Please login'})
+
+
+@user.route('/api/delete/reservation', methods=['DELETE'])
+def delete_seat():
+    token = request.cookies.get('auth_token')
+    if token:
+        user_email = verify_jwt(token)
+        if user_email:
+            db_manager = DatabaseManager()
+
+            # 从请求中获取数据
+            data = request.json
+            account = data.get('account')
+
+            # 记录日志
+            print(f"Attempting to delete appointment for account: {account}")
+
+            # 检查数据库是否存在该账号的预约
+            account_exists = db_manager.delete_reservation_account(user_email,account)
+
+            if not account_exists:
+                # 如果不存在，返回操作结果
+                return jsonify({'success': False, 'message': "没有找到该账号的预约"})
+            # 返回操作结果
+            return jsonify({'success': True})
+
+    return jsonify({'success': False, 'error': 'Please login'})

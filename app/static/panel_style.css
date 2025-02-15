@@ -21,14 +21,18 @@
 
 .info {
     width: 100%;
+    min-width: 60px;
+    margin: 3px;
     display: flex;
+    flex-wrap: wrap;
 }
 
 .info-text {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 3px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .simple {
@@ -48,6 +52,7 @@
 .simple-1 p {
     font-weight: bold;
     margin-left: 10px;
+    white-space: nowrap; /* 防止文本换行 */
 }
 
 .simple p {
@@ -130,6 +135,13 @@
     display: grid;
 }
 
+
+.password-toggle:hover {
+    color: #006fc9; /* 鼠标悬浮时的颜色 */
+    font-weight: bold;
+}
+
+
 /* 关闭按钮样式 */
 .close {
     color: #aaa;
@@ -162,7 +174,7 @@
     font-size: 12px; /* 缩小字体 */
     width: calc(30% - 10px); /* 每列的宽度 */
     display: inline-block; /* 使时间框在一行内排列 */
-
+    border-radius: 4px;
 }
 
 label {
@@ -215,6 +227,37 @@ label {
     flex-wrap: nowrap;
     flex-direction: row;
 }
+
+
+/* 删除动画 */
+.shrink-and-fade {
+    animation: shrinkAndFade 0.3s ease-in-out forwards;
+}
+
+@keyframes shrinkAndFade {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+}
+
+.slide-out-right {
+    animation: slideOutRight 0.3s ease-in-out forwards;
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(100%);
+    }
+}
+
 
 @media (max-width: 768px) {
     .card.user-card .btn-box {
