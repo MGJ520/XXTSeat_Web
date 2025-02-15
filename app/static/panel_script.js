@@ -328,11 +328,11 @@ function createUserCard(data) {
                 </div>
                 <div class="info-text">
                     <p><i class="fa-solid fa-couch"></i> 预约房间</p>
-                    <p id="show-room-seat">${data.room_seat}</p>
+                    <p id="show-room">${data.room_seat}</p>
                 </div>
                 <div class="info-text">
                     <p><i class="fa-solid fa-chair"></i></i> 预约座位</p>
-                    <p id="show-room-seat">${data.seat_id}座位</p>
+                    <p id="show-seat">${data.seat_id}座位</p>
                 </div>
             </div>
             <div class="box">
@@ -340,7 +340,7 @@ function createUserCard(data) {
                     <button onclick="service(this)">服务</button>
                     <button onclick="releaseSeat(this)">退座</button>
                     <button onclick="editInfo(this)">修改</button>
-                    <button onclick="deleteCard(event)">删除</button>
+                    <button onclick="deleteCard(this)">删除</button>
                 </div>
             </div>
         </div>
@@ -397,29 +397,70 @@ function service() {
     alert("服务功能尚未实现！");
 }
 
-function releaseSeat() {
-    alert("退坐功能尚未实现！");
+function releaseSeat(button) {
+    // 获取当前点击的按钮
+    // 找到按钮所在的卡片（向上查找直到找到 class="card user-card" 的元素）
+    const user_card = button.closest(".card.user-card");
+
+    if (!user_card) {
+        alert("无法找到对应的卡片！");
+        return;
+    }
+
+    // 从卡片中提取 data.account 等信息
+    const account = user_card.querySelector("#show-account p").textContent;
+    // const time = user_card.querySelector("#show-time").textContent;
+    // const room = user_card.querySelector("#show-room").textContent;
+    // const seat = user_card.querySelector("#show-seat").textContent;
+
+    const data = {
+        account: account
+    };
+
+    fetch('/api/cancel/reservation_seat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert(result.message || '操作成功！');
+                location.replace(location.href);
+            } else {
+                alert('操作失败: ' + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error sending seat action:', error);
+            alert('发生错误，请稍后再试。');
+        });
 }
 
 function editInfo() {
     alert("修改功能尚未实现！");
 }
 
-function deleteCard(event) {
-
-    const card = event.target.closest(".card");
-    // 获取当前点击的按钮
-    const button = event.target;
-
-    // 找到按钮所在的卡片（向上查找直到找到 class="card user-card" 的元素）
+function deleteCard(button) {
+// 找到按钮所在的卡片（向上查找直到找到 class="card user-card" 的元素）
     const user_card = button.closest(".card.user-card");
+
+    if (!user_card) {
+        alert("无法找到对应的卡片！");
+        return;
+    }
 
     // 从卡片中提取 data.account 等信息
     const account = user_card.querySelector("#show-account p").textContent;
     const time = user_card.querySelector("#show-time").textContent;
-    const roomSeat = user_card.querySelector("#show-room-seat").textContent;
+    const room = user_card.querySelector("#show-room").textContent;
+    const seat = user_card.querySelector("#show-seat").textContent;
+
+
     // 弹出确认对话框
-    const isConfirmed = confirm(`确定要删除以下预约信息吗？\n\n预约账户: ${account}\n预约时间: ${time}\n预约位置: ${roomSeat}`);
+    const isConfirmed = confirm(`确定要删除以下预约信息吗？\n\n预约账户: ${account}\n预约时间: ${time}\n预约位置: ${room}-${seat}`);
 
     // 如果用户确认删除
     if (!isConfirmed) {
@@ -430,7 +471,7 @@ function deleteCard(event) {
         account: account
     };
 
-    if (card) {
+    if (user_card) {
         // 发送删除请求到服务器
         fetch('/api/delete/reservation', {
             method: 'DELETE',
@@ -442,11 +483,11 @@ function deleteCard(event) {
             .then(result => {
                 if (result.success) {
                     // 添加动画类
-                    card.classList.add("shrink-and-fade"); // 缩小并淡出1
+                    user_card.classList.add("shrink-and-fade"); // 缩小并淡出1
                     // card.classList.add("slide-out-right"); // 滑出
                     // 设置一个短暂的延迟，等待动画完成后再删除
                     setTimeout(() => {
-                        card.remove();
+                        user_card.remove();
                     }, 300); // 动画时长为 0.3s，延迟 300ms
                 } else {
                     // 处理失败情况
@@ -504,5 +545,4 @@ async function fetchReservations() {
             console.error('Error fetching reservations:', error);
         });
 }
-
 

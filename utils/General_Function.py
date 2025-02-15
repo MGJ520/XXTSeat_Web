@@ -9,8 +9,7 @@ import random
 from uuid import uuid1
 from datetime import datetime, timedelta
 
-
-
+from config import status
 
 
 def AES_Encrypt(data):
@@ -235,3 +234,12 @@ def format_timedelta(td):
         return f"{hours:02d}:{minutes:02d}"
     else:
         return "00:00"  # 默认值
+
+
+
+
+def get_status_code_by_name(status_name):
+    # 反转字典，将中文状态作为键，数字作为值
+    reverse_status = {v: k for k, v in status.items()}
+    """根据中文状态名称查询对应的数字键"""
+    return reverse_status.get(status_name, None)

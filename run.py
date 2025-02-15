@@ -27,7 +27,7 @@ if __name__ == '__main__':
     # 数据库初始化
     DatabaseManager()
     # 检查服务
-    # ReservationCheckService()
+    ReservationCheckService()
     # Web服务
     service()
 

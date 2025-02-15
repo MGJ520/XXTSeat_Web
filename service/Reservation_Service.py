@@ -29,27 +29,27 @@ class ReservationCheckService:
     def sign(self, user):
         # 这里是单个用户登录并尝试预约的逻辑
         # 解包用户信息，包括用户名、密码、预约时间、房间ID、座位ID和预约星期
-        username, password, times, roomid, seatid, daysofweek,is_auto_reservation = user.values()
+        username, password, times, room_id, seat_id, day_week, is_auto_reservation, account_status = user.values()
         # 尝试预约
-        logging.info(f"[Try_Sign] - {username} -- {times} -- {roomid} -- {seatid} ---- ")
+        logging.info(f"[Try_Sign] - {username} -- {times} -- {room_id} -- {seat_id} ---- ")
         s = XxTWebApi(sleep_time=self.TIME_SLEEP_TIME, max_attempt=self.TIME_MAX_ATTEMPT, reserve_next_day=self.TIME_RESERVE_NEXT_DAY)
         s.get_login_status()
         s.login(username, password)
         s.requests.headers.update({'Host': 'office.chaoxing.com'})
-        suc = s.submit_sign(username, times, roomid, seatid)
+        suc = s.submit_sign(username, times, room_id, seat_id)
         return suc
 
     def signback(self, user):
         # 这里是单个用户登录并尝试预约的逻辑
         # 解包用户信息，包括用户名、密码、预约时间、房间ID、座位ID和预约星期
-        username, password, times, roomid, seatid, daysofweek,is_auto_reservation = user.values()
+        username, password, times, room_id, seat_id, day_week,is_auto_reservation ,account_status= user.values()
         # 尝试预约
-        logging.info(f"[Try_signback] - {username} -- {times} -- {roomid} -- {seatid} ---- ")
+        logging.info(f"[Try_signback] - {username} -- {times} -- {room_id} -- {seat_id} ---- ")
         s = XxTWebApi(sleep_time=self.TIME_SLEEP_TIME, max_attempt=self.TIME_MAX_ATTEMPT, reserve_next_day=self.TIME_RESERVE_NEXT_DAY)
         s.get_login_status()
         s.login(username, password)
         s.requests.headers.update({'Host': 'office.chaoxing.com'})
-        suc = s.submit_signback(username, times, roomid, seatid)
+        suc = s.submit_signback(username, times, room_id, seat_id)
         return suc
 
 
@@ -77,48 +77,55 @@ class ReservationCheckService:
         s.requests.headers.update({'Host': 'office.chaoxing.com'})
         # 获取第一个信息
         Seat_info = s.get_seat_reservation_info(username)
+
+        # print(Seat_info['type'])
         # print(Seat_info['status'])
-        # 正常状态
-        if Seat_info['type'] == -1:
-            db.update_reservations_new_status(username, Seat_info['status'])
-            # '0': '待履约',
-            if Seat_info['status'] == 0:
-                # 判断是否为今天
-                if not is_tomorrow(Seat_info['startTime']):
-                    # 如果在15min内
-                    if is_within_m_minutes(int(time.time() * 1000), Seat_info['startTime'], 15):
-                        logging.info(f"发现预约：{username}")
-                        # 签到
-                        self.sign(user)
-                    else:
-                        # 如果在30min后，为什么？因为服务器是中间时间段启动的
-                        if is_within_m_minutes_num(int(time.time() * 1000), Seat_info['startTime'], 30):
-                            #马上签到
-                            self.sign(user)
 
-            # '1': '学习中', 少于15分钟，自动退签
-            if Seat_info['status'] == 1:
+        db.update_reservations_new_status(username, Seat_info['status'])
+
+        # '0': '待履约',
+        if Seat_info['status'] == 0:
+            # 判断是否为今天
+            if not is_tomorrow(Seat_info['startTime']):
                 # 如果在15min内
-                if is_within_m_minutes(int(time.time() * 1000), Seat_info['endTime'], 15):
-                    # 签到
-                    logging.info(f"发现退签：{username}")
-                    self.signback(user)
+                if is_within_m_minutes(int(time.time() * 1000), Seat_info['startTime'], 15):
+                    logging.info(f"发现预约：{username}")
+                    # 马上签到
+                    if self.sign(user):
+                        db.update_reservations_new_status(username, 1)
+                else:
+                    # 如果在30min后，为什么？因为服务器是中间时间段启动的
+                    if is_within_m_minutes_num(int(time.time() * 1000), Seat_info['startTime'], 40):
+                        #马上签到
+                        if self.sign(user):
+                            db.update_reservations_new_status(username, 1)
 
-            # '5': '被监督中', 自动签到
-            if Seat_info['status'] == 5:
+        # '1': '学习中', 少于15分钟，自动退签
+        if Seat_info['status'] == '1':
+            # 如果在15min内
+            if is_within_m_minutes(int(time.time() * 1000), Seat_info['endTime'], 15):
                 # 签到
-                logging.info(f"发现监督：{username}")
-                self.sign(user)
+                logging.info(f"发现退签：{username}")
+                if self.signback(user):
+                    db.update_reservations_new_status(username, 2)
 
-        # 违约，标注违约
-        else:
-            logging.error(f"呜呜呜呜呜,违约了！！！！")
-            #更新数据库，-1表示违约了
-            db.update_reservations_new_status(username, -1)
-            return
+        # '5': '被监督中', 自动签到
+        if Seat_info['status'] == 5:
+            # 签到
+            logging.info(f"发现监督：{username}")
+            self.sign(user)
+
+    # # 违约，标注违约
+    # else:
+    #
+    #     logging.error(f"呜呜呜呜呜,违约了！！！！")
+    #     #更新数据库，-1表示违约了
+    #     db.update_reservations_new_status(username, -1)
+    #     return
 
     def run_periodically(self, interval):
         while True:
+
             if not is_within_time_range(TIME_START_TIME, TIME_END_TIME):
                 logging.info("[Check] --------------------Reached end time.不更新.---------------------")
             else:

@@ -3,202 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>时间段选择控件</title>
+    <title>旋转圆圈加载动画（单条弧线，长度变化）</title>
     <style>
-        .time-picker {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .time-slot {
-            margin: 5px;
-            padding: 5px;
-            border: 1px solid #ccc;
-            cursor: pointer;
-            font-size: 12px; /* 缩小字体 */
-            width: calc(20% - 10px); /* 每列的宽度 */
-            display: inline-block; /* 使时间框在一行内排列 */
-            transition: background-color 0.3s ease; /* 添加过渡动画 */
-        }
-
-        .selected {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .highlight {
-            background-color: #ccc; /* 暗灰色提示 */
-            color: black;
-            animation: highlightAnimation 0.5s forwards; /* 添加高亮动画 */
-        }
-
-        @keyframes highlightAnimation {
+        /* 定义旋转动画，带速度变化和弧线长度变化 */
+        @keyframes rotate {
             0% {
-                background-color: #ccc;
+                transform: rotate(0deg);
+                border-width: 5px 5px 5px 5px; /* 初始时完整圆 */
+                animation-timing-function: ease-in;
+            }
+            50% {
+                transform: rotate(180deg);
+                border-width: 5px 5px 0 5px; /* 中间时弧线缩短 */
+                animation-timing-function: ease-out;
             }
             100% {
-                background-color: #f0f0f0; /* 高亮结束后的背景色 */
+                transform: rotate(360deg);
+                border-width: 5px 5px 5px 5px; /* 最终恢复完整圆 */
             }
         }
 
-        #time-slots {
-            display: flex;
-            flex-wrap: wrap; /* 自动换行 */
-            width: 100%; /* 设置容器宽度 */
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid transparent;
+            border-top-color: #007bff; /* 只显示顶部边框 */
+            border-radius: 50%;
+            animation: rotate 1.5s infinite; /* 动画持续时间 */
+            margin: 100px auto; /* 居中显示 */
         }
     </style>
 </head>
 <body>
-<div class="time-picker">
-    <div id="time-slots"></div>
-    <div>
-        <button id="clear-selection">清空选择</button>
-    </div>
-</div>
-
-<script>
-    const startTime = 8; // 开始时间
-    const endTime = 22; // 结束时间
-    const maxDuration = 4; // 最长选择时长（小时）
-    const timeSlots = []; // 存储时间段
-    let selectedSlots = []; // 存储正式选中的时间段
-    let highlightedSlots = []; // 存储高亮提示的时间段
-    let firstSelectedIndex = null; // 记录第一个选中的时间点索引
-
-    // 生成时间段
-    for (let hour = startTime; hour < endTime; hour++) {
-        for (let minute = 0; minute < 60; minute += 30) {
-            const start = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-            const endHour = hour + (minute === 30 ? 1 : 0);
-            const endMinute = minute === 30 ? 0 : 30;
-            const end = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
-            timeSlots.push({start, end});
-        }
-    }
-
-    // 渲染时间段
-    const timeSlotsContainer = document.getElementById('time-slots');
-    timeSlots.forEach((slot, index) => {
-        const slotDiv = document.createElement('div');
-        slotDiv.classList.add('time-slot');
-        slotDiv.textContent = `${slot.start} - ${slot.end}`;
-        slotDiv.addEventListener('click', () => selectTimeSlot(index));
-        timeSlotsContainer.appendChild(slotDiv);
-    });
-
-    // 选择时间段
-    function selectTimeSlot(index) {
-        if (firstSelectedIndex === null) {
-            // 第一次选择，记录第一个选中的时间点
-            firstSelectedIndex = index;
-            selectedSlots = [index]; // 正式选中第一个时间点
-            highlightMaxDuration(index); // 高亮显示最长时间范围
-        } else {
-            // 第二次选择，判断是否是同一个时间点
-            if (firstSelectedIndex === index) {
-                // 如果是同一个时间点，直接确认选择这个时间段
-                firstSelectedIndex = null; // 重置第一个选中的时间点
-                highlightedSlots = []; // 清空高亮状态
-
-                // 获取选择的开始时间和结束时间
-                const selectedStart = timeSlots[index].start;
-                const selectedEnd = timeSlots[index].end;
-
-                // 打印或记录选择的开始时间和结束时间
-                console.log(`选择的开始时间: ${selectedStart}`);
-                console.log(`选择的结束时间: ${selectedEnd}`);
-
-                // 可以将开始时间和结束时间存储到全局变量中
-                const selectedTimeRange = {
-                    start: selectedStart,
-                    end: selectedEnd
-                };
-
-                console.log(`选择的时间范围: ${JSON.stringify(selectedTimeRange)}`);
-            } else {
-                // 不是同一个时间点，根据两个时间点确定正式选中的范围
-                const start = Math.min(firstSelectedIndex, index);
-                const end = Math.max(firstSelectedIndex, index);
-
-                // 计算选择的时长是否超过最大时长限制
-                const duration = (end - start) / 2; // 每个时间槽代表半小时
-                if (duration > maxDuration) {
-                    // 取消选择
-                    firstSelectedIndex = null;
-                    selectedSlots = [];
-                    highlightedSlots = [];
-                } else {
-                    selectedSlots = []; // 清空之前的正式选中状态
-                    for (let i = start; i <= end; i++) {
-                        selectedSlots.push(i);
-                    }
-                    firstSelectedIndex = null; // 重置第一个选中的时间点
-                    highlightedSlots = []; // 清空高亮状态
-
-                    // 获取选择的开始时间和结束时间
-                    const selectedStart = timeSlots[start].start;
-                    const selectedEnd = timeSlots[end].end;
-
-                    // 打印或记录选择的开始时间和结束时间
-                    console.log(`选择的开始时间: ${selectedStart}`);
-                    console.log(`选择的结束时间: ${selectedEnd}`);
-
-                    // 可以将开始时间和结束时间存储到全局变量中
-                    const selectedTimeRange = {
-                        start: selectedStart,
-                        end: selectedEnd
-                    };
-
-                    console.log(`选择的时间范围: ${JSON.stringify(selectedTimeRange)}`);
-                }
-            }
-        }
-
-        // 更新UI
-        updateTimeSlotsUI();
-    }
-
-    // 高亮显示最长时间范围
-    function highlightMaxDuration(startIndex) {
-        highlightedSlots = [];
-        const maxSlots = maxDuration * 2; // 最长选择时长对应的槽位数
-        for (let i = 0; i < maxSlots; i++) {
-            const nextIndex = startIndex + i;
-            if (nextIndex < timeSlots.length) {
-                highlightedSlots.push(nextIndex);
-            } else {
-                break; // 防止超出时间槽范围
-            }
-        }
-    }
-
-    // 更新时间槽的UI
-    function updateTimeSlotsUI() {
-        const slots = document.querySelectorAll('.time-slot');
-        slots.forEach((slot, index) => {
-            if (selectedSlots.includes(index)) {
-                slot.classList.add('selected');
-                slot.classList.remove('highlight');
-            } else if (highlightedSlots.includes(index)) {
-                slot.classList.add('highlight');
-                slot.classList.remove('selected');
-            } else {
-                slot.classList.remove('selected', 'highlight');
-            }
-        });
-    }
-
-    // 清空选择
-    function clearSelection() {
-        firstSelectedIndex = null;
-        selectedSlots = [];
-        highlightedSlots = [];
-        updateTimeSlotsUI();
-    }
-
-    // 绑定清空按钮事件
-    document.getElementById('clear-selection').addEventListener('click', clearSelection);
-</script>
+    <div class="loader"></div>
 </body>
 </html>

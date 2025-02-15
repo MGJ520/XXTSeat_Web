@@ -573,6 +573,71 @@ class DatabaseManager:
         finally:
             self.close()
 
+    def fetch_user_email_account_information(self, user_email=None, reservation_account=None):
+        try:
+            self.connect()  # 建立数据库连接
+
+            # 构造查询条件
+            conditions = []
+            params = []
+
+            if user_email:
+                conditions.append("platform_email = %s")
+                params.append(user_email)
+            if reservation_account:
+                conditions.append("reservation_account = %s")
+                params.append(reservation_account)
+
+            # 如果没有提供任何查询条件，则查询所有记录
+            where_clause = "WHERE " + " AND ".join(conditions) if conditions else ""
+
+            # 查询 SQL 语句
+            query_sql = f"""
+            SELECT reservation_account, reservation_password, start_time, end_time, 
+                   room_location, seat_location, refresh_status, reservation_status, account_status
+            FROM Reservation
+            {where_clause};
+            """
+
+            # 执行查询
+            self.cursor.execute(query_sql, tuple(params))
+            rows = self.cursor.fetchall()
+
+            # 初始化一个空列表来存储转换后的预约数据
+            appointments_data = []
+            # 遍历查询结果，将每条记录转换为所需的字典格式
+            for row in rows:
+                # print(row)
+                # 检查时间字段是否为 datetime.time 类型
+                # 使用改进后的逻辑
+                start_time_str = format_timedelta(row[2])
+                end_time_str = format_timedelta(row[3])
+
+                # 将seat_location转换为三位数的字符串格式
+                seat_location_str = f"{int(row[5]):03d}"  # 确保转换为整数后再格式化
+
+                appointment = {
+                    "username": row[0],
+                    "password": row[1],
+                    "time": [start_time_str, end_time_str],
+                    "room_id": str(row[4]),  # 假设room_location是整数类型
+                    "seat_id": [seat_location_str],  # 确保seatid是三位数的字符串格式
+                    "day_week": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                    'is_auto_reservation': row[7],
+                    'account_status': status[str(row[8])] or '未知状态'
+                }
+                # print(appointments_data)
+                appointments_data.append(appointment)
+            return appointments_data
+
+        except Exception as e:
+            print(f"查询预约记录时发生错误：{e}")
+            return []
+
+        finally:
+            self.close()  # 关闭数据库连接
+
+
     # 获取平台用户数据
     def fetch_user_information(self, user_email=None):
         try:
@@ -625,12 +690,22 @@ class DatabaseManager:
             self.close()
 
     def check_reservation_account_exists(self, reservation_account):
-        """检查reservation_account是否已存在"""
-        check_account_query = """
-        SELECT reservation_account FROM Reservation WHERE reservation_account = %s;
-        """
-        self.cursor.execute(check_account_query, (reservation_account,))
-        return self.cursor.fetchone() is not None
+
+        try:
+            self.connect()
+            """检查reservation_account是否已存在"""
+            check_account_query = """
+                   SELECT reservation_account FROM Reservation WHERE reservation_account = %s;
+                   """
+            self.cursor.execute(check_account_query, (reservation_account,))
+            return self.cursor.fetchone() is not None
+        except Exception as e:
+            print(f"更新用户记录时发生错误：{e}")
+            return False
+        finally:
+            self.close()
+
+
 
     def check_email_reservation_account_exists(self, email, reservation_account):
         """
@@ -639,28 +714,44 @@ class DatabaseManager:
         :param reservation_account: 需要检查的预约账号
         :return: 如果存在返回 True，否则返回 False
         """
-        check_account_query = """
-        SELECT reservation_account 
-        FROM Reservation 
-        WHERE platform_email = %s AND reservation_account = %s;
-        """
-        self.cursor.execute(check_account_query, (email, reservation_account))
-        return self.cursor.fetchone() is not None
+        try:
+            self.connect()
+            check_account_query = """
+                    SELECT reservation_account 
+                    FROM Reservation 
+                    WHERE platform_email = %s AND reservation_account = %s;
+                    """
+            self.cursor.execute(check_account_query, (email, reservation_account))
+            return self.cursor.fetchone() is not None
+        except Exception as e:
+            print(f"更新用户记录时发生错误：{e}")
+            return False
+        finally:
+            self.close()
+
 
     def check_time_overlap(self, room_location, seat_location, start_time, end_time):
         """检查指定房间和座位是否存在时间重叠"""
-        check_overlap_query = """
-        SELECT * FROM Reservation
-        WHERE room_location = %s AND seat_location = %s
-        AND (
-            (start_time < %s AND end_time > %s) OR
-            (start_time < %s AND end_time > %s) OR
-            (start_time >= %s AND end_time <= %s)
-        );
-        """
-        self.cursor.execute(check_overlap_query, (
-        room_location, seat_location, start_time, start_time, end_time, end_time, start_time, end_time))
-        return self.cursor.fetchone() is not None
+        try:
+            self.connect()
+            check_overlap_query = """
+                    SELECT * FROM Reservation
+                    WHERE room_location = %s AND seat_location = %s
+                    AND (
+                        (start_time < %s AND end_time > %s) OR
+                        (start_time < %s AND end_time > %s) OR
+                        (start_time >= %s AND end_time <= %s)
+                    );
+                    """
+            self.cursor.execute(check_overlap_query, (
+                room_location, seat_location, start_time, start_time, end_time, end_time, start_time, end_time))
+            return self.cursor.fetchone() is not None
+        except Exception as e:
+            print(f"更新用户记录时发生错误：{e}")
+            return False
+        finally:
+            self.close()
+
 
     def delete_reservation_account(self, email, reservation_account):
         """
@@ -669,15 +760,23 @@ class DatabaseManager:
         :param reservation_account: 需要删除的预约账号
         :return: 删除结果信息
         """
-        # 删除记录
-        delete_account_query = """
-        DELETE FROM Reservation 
-        WHERE platform_email = %s AND reservation_account = %s;
-        """
         try:
-            self.cursor.execute(delete_account_query, (email, reservation_account))
-            self.conn.commit()  # 提交事务
-            return f"成功删除预约账号：{reservation_account}，属于用户：{email}"
+            self.connect()
+            # 删除记录
+            delete_account_query = """
+                    DELETE FROM Reservation 
+                    WHERE platform_email = %s AND reservation_account = %s;
+                    """
+            try:
+                self.cursor.execute(delete_account_query, (email, reservation_account))
+                self.conn.commit()  # 提交事务
+                return f"成功删除预约账号：{reservation_account}，属于用户：{email}"
+            except Exception as e:
+                self.conn.rollback()  # 回滚事务
+                return f"删除失败：{str(e)}"
         except Exception as e:
-            self.conn.rollback()  # 回滚事务
-            return f"删除失败：{str(e)}"
+            print(f"更新用户记录时发生错误：{e}")
+            return False
+        finally:
+            self.close()
+

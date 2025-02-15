@@ -81,13 +81,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
     getUserData().then(data => {
         if (data) {
+            userData=data;
             //设置用户昵称
             setUserAvatar(data.platformNickname);
             updateProfileInfo('text-info', {
                 nickname: data.platformNickname,
                 email: data.platformEmail
             });
-            userData = data;
+
+            // 获取按钮
+            const button = document.getElementById("nav-button-server-log");
+
+            // 默认隐藏按钮
+            button.style.display = "none";
+
+            // 如果权限级别大于或等于 3，则显示按钮
+            if (data.permissionLevel >= 3) {
+                button.style.display = "block";  // 显示按钮
+            }
         } else {
             console.log('No data available');
         }

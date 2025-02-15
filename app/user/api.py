@@ -2,7 +2,9 @@ from flask import request, make_response, jsonify
 
 from config import Room_data
 from utils.Database_Function import DatabaseManager
+from utils.General_Function import get_status_code_by_name
 from utils.Jwt_Function import create_jwt, verify_jwt
+from utils.Xxt_WebApi import XxTWebApi
 from . import user
 
 
@@ -174,7 +176,7 @@ def new_reservation():
 
                 reservation_end_time = '2025-12-31 17:00:00'
 
-                account_status = 0
+                account_status = 9
                 refresh_status = True
                 reservation_status = True
                 sign_in_status = True
@@ -230,7 +232,7 @@ def delete_seat():
             print(f"Attempting to delete appointment for account: {account}")
 
             # 检查数据库是否存在该账号的预约
-            account_exists = db_manager.delete_reservation_account(user_email,account)
+            account_exists = db_manager.delete_reservation_account(user_email, account)
 
             if not account_exists:
                 # 如果不存在，返回操作结果
@@ -239,3 +241,46 @@ def delete_seat():
             return jsonify({'success': True})
 
     return jsonify({'success': False, 'error': 'Please login'})
+
+
+@user.route('/api/cancel/reservation_seat', methods=['POST'])
+def cancel_seat():
+    token = request.cookies.get('auth_token')
+    if token:
+        user_email = verify_jwt(token)
+        if user_email:
+            db_manager = DatabaseManager()
+
+            # 从请求中获取数据
+            data = request.json
+            account = data.get('account')
+            appointments = db_manager.fetch_user_email_account_information(user_email, account)
+
+            # 检查appointments是否为空
+            if not appointments:
+                return jsonify(success=False, message='没有预约数据')
+
+            for item in appointments:
+                username, password, times, room_id, seat_id, day_week,is_auto_reservation ,account_status = item.values()
+                if get_status_code_by_name(account_status) in ['0', '1', '3', '5']:
+                    # 登录
+                    s = XxTWebApi(sleep_time=1, max_attempt=1, reserve_next_day=False)
+                    s.get_login_status()
+                    s.login(account, password)
+                    s.requests.headers.update({'Host': 'office.chaoxing.com'})
+                    if account_status in [0]:
+                        suc = s.submit_cancel(account, 'time', room_id, seat_id)
+                    else:
+                        suc = s.submit_signback(account, 'time', room_id, seat_id)
+                    # 判断
+                    if not suc:
+                        return jsonify(success=False, message='退座失败')
+                    else:
+                        # 如果所有允许退座的预约都成功退座，则返回成功消息
+                        db_manager.update_reservations_new_status(account, 2)
+                        return jsonify(success=True, message='退座成功')
+                else:
+                    if not db_manager.check_email_reservation_account_exists(user_email, account):
+                        return jsonify(success=False, message='退座失败,你没有该账户')
+                    else:
+                        return jsonify(success=False, message='退座失败,当前不可以退座')
