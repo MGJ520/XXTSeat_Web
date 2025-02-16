@@ -1,7 +1,16 @@
-.card {
-    border: 10px;
-}
 
 label {
     white-space: nowrap; /* 防止文字换行 */
+}
+
+.user-card {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.user-card-item {
+    padding: 16px 8px 8px;
+    border-bottom: 1px solid rgb(242, 242, 242);
 }
