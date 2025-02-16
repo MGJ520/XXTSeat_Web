@@ -8,16 +8,16 @@ from config import TIME_Check_TIME, TIME_MAX_ATTEMPT, TIME_SLEEP_TIME, TIME_STAR
 from utils.Database_Function import DatabaseManager
 from utils.Xxt_WebApi import XxTWebApi
 from utils.General_Function import is_tomorrow, get_current_hour, \
-    is_within_m_minutes, is_within_m_minutes_num, parse_time, is_within_time_range
+    is_within_m_minutes, is_within_m_minutes_num, parse_time, is_within_time_range, is_today
 
 
 class ReservationCheckService:
     def __init__(self):
-        self.TIME_SLEEP_TIME        = TIME_SLEEP_TIME
-        self.TIME_MAX_ATTEMPT      = TIME_MAX_ATTEMPT
+        self.TIME_SLEEP_TIME = TIME_SLEEP_TIME
+        self.TIME_MAX_ATTEMPT = TIME_MAX_ATTEMPT
         self.TIME_RESERVE_NEXT_DAY = True
-        self.TIME_Check_TIME       = TIME_Check_TIME
-        self.task_map              = {}
+        self.TIME_Check_TIME = TIME_Check_TIME
+        self.task_map = {}
         # 配置日志的基本设置，设置日志级别为INFO，并定义日志的格式
         logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
         # 设置为守护线程，这样主线程结束时子线程也会结束
@@ -32,7 +32,8 @@ class ReservationCheckService:
         username, password, times, room_id, seat_id, day_week, is_auto_reservation, account_status = user.values()
         # 尝试预约
         logging.info(f"[Try_Sign] - {username} -- {times} -- {room_id} -- {seat_id} ---- ")
-        s = XxTWebApi(sleep_time=self.TIME_SLEEP_TIME, max_attempt=self.TIME_MAX_ATTEMPT, reserve_next_day=self.TIME_RESERVE_NEXT_DAY)
+        s = XxTWebApi(sleep_time=self.TIME_SLEEP_TIME, max_attempt=self.TIME_MAX_ATTEMPT,
+                      reserve_next_day=self.TIME_RESERVE_NEXT_DAY)
         s.get_login_status()
         s.login(username, password)
         s.requests.headers.update({'Host': 'office.chaoxing.com'})
@@ -42,17 +43,16 @@ class ReservationCheckService:
     def signback(self, user):
         # 这里是单个用户登录并尝试预约的逻辑
         # 解包用户信息，包括用户名、密码、预约时间、房间ID、座位ID和预约星期
-        username, password, times, room_id, seat_id, day_week,is_auto_reservation ,account_status= user.values()
+        username, password, times, room_id, seat_id, day_week, is_auto_reservation, account_status = user.values()
         # 尝试预约
         logging.info(f"[Try_signback] - {username} -- {times} -- {room_id} -- {seat_id} ---- ")
-        s = XxTWebApi(sleep_time=self.TIME_SLEEP_TIME, max_attempt=self.TIME_MAX_ATTEMPT, reserve_next_day=self.TIME_RESERVE_NEXT_DAY)
+        s = XxTWebApi(sleep_time=self.TIME_SLEEP_TIME, max_attempt=self.TIME_MAX_ATTEMPT,
+                      reserve_next_day=self.TIME_RESERVE_NEXT_DAY)
         s.get_login_status()
         s.login(username, password)
         s.requests.headers.update({'Host': 'office.chaoxing.com'})
         suc = s.submit_signback(username, times, room_id, seat_id)
         return suc
-
-
 
     def check(self, user):
         '''
@@ -63,12 +63,13 @@ class ReservationCheckService:
         # 这里是单个用户登录并尝试预约的逻辑
         # 解包用户信息，包括用户名、密码、预约时间、房间ID、座位ID和预约星期
         db = DatabaseManager()
-        username, password, times, room_id, seat_id, day_week,is_auto_reservation ,account_status= user.values()
+        username, password, times, room_id, seat_id, day_week, is_auto_reservation, account_status = user.values()
         # 尝试预约
         # logging.info(f" ---- [Try_Check] - {username}  ---- ")
-        s = XxTWebApi(sleep_time=self.TIME_SLEEP_TIME, max_attempt=self.TIME_MAX_ATTEMPT, reserve_next_day=self.TIME_RESERVE_NEXT_DAY)
+        s = XxTWebApi(sleep_time=self.TIME_SLEEP_TIME, max_attempt=self.TIME_MAX_ATTEMPT,
+                      reserve_next_day=self.TIME_RESERVE_NEXT_DAY)
         s.get_login_status()
-        out_login=s.login(username, password)
+        out_login = s.login(username, password)
         # 密码错误
         if not out_login[0]:
             db.update_reservations_new_status(username, 8)
@@ -77,11 +78,20 @@ class ReservationCheckService:
         s.requests.headers.update({'Host': 'office.chaoxing.com'})
         # 获取第一个信息
         Seat_info = s.get_seat_reservation_info(username)
-
+        # print(Seat_info)
         # print(Seat_info['type'])
         # print(Seat_info['status'])
 
+        # 同步到数据库
         db.update_reservations_new_status(username, Seat_info['status'])
+
+        # 违约
+        if Seat_info['type'] != -1:
+            if is_today(Seat_info['today']):
+                logging.error(f"呜呜呜呜呜,违约了！！！！")
+                # 更新数据库，-1表示违约了
+                db.update_reservations_new_status(username, -1)
+            return
 
         # '0': '待履约',
         if Seat_info['status'] == 0:
@@ -95,8 +105,8 @@ class ReservationCheckService:
                         db.update_reservations_new_status(username, 1)
                 else:
                     # 如果在30min后，为什么？因为服务器是中间时间段启动的
-                    if is_within_m_minutes_num(int(time.time() * 1000), Seat_info['startTime'], 40):
-                        #马上签到
+                    if is_within_m_minutes_num(int(time.time() * 1000), Seat_info['startTime'], 30):
+                        # 马上签到
                         if self.sign(user):
                             db.update_reservations_new_status(username, 1)
 
@@ -115,14 +125,6 @@ class ReservationCheckService:
             logging.info(f"发现监督：{username}")
             self.sign(user)
 
-    # # 违约，标注违约
-    # else:
-    #
-    #     logging.error(f"呜呜呜呜呜,违约了！！！！")
-    #     #更新数据库，-1表示违约了
-    #     db.update_reservations_new_status(username, -1)
-    #     return
-
     def run_periodically(self, interval):
         while True:
 
@@ -136,7 +138,7 @@ class ReservationCheckService:
                 users = db.fetch_check_information()
                 # 修复bug
                 if len(users) > 0:
-                   with ThreadPoolExecutor(max_workers=len(users)) as executor:
+                    with ThreadPoolExecutor(max_workers=len(users)) as executor:
                         futures = []
                         for index, user in enumerate(users):
                             # 将每个用户的登录和预约作为一个任务提交到线程池
@@ -148,6 +150,7 @@ class ReservationCheckService:
         # 设置结束时间为当天的22:05结束程序
         # 设置每5分钟（300秒）执行一次my_function函数，并传入参数
         self.run_periodically(self.TIME_Check_TIME)
+
 
 if __name__ == '__main__':
     RS = ReservationCheckService()

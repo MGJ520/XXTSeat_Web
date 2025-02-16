@@ -165,17 +165,35 @@ def new_reservation():
                 return jsonify({'success': False, 'message': 'Seat ID is required'}), 400
 
             try:
+
                 # 检查预约账号是否已存在
                 if db_manager.check_reservation_account_exists(reservation_account):
-                    return jsonify({'success': False, 'message': 'Reservation account already exists'}), 400
+                    if db_manager.check_email_reservation_account_exists(user_email, reservation_account):
+                        # 检查时间是否重叠
+                        if db_manager.check_time_overlap(room_id, seat_id, start_time, end_time,
+                                                         exclude_reservation_account=reservation_account):
+                            return jsonify(
+                                {'success': False, 'message': '该座位该时间段已经被占用'}), 400
+                        if db_manager.update_reservation(
+                                platform_email=user_email,
+                                reservation_account=reservation_account,
+                                start_time=start_time,
+                                end_time=end_time,
+                                room_location=room_id,
+                                seat_location=seat_id,
+                                account_status=9):
+                            return jsonify({'success': True, 'message': 'Reservation successful'}), 200
+                        else:
+                            return jsonify({'success': False, 'error': 'mysql error'})
+                    else:
+                        return jsonify({'success': False, 'message': 'Reservation account already exists'}), 400
 
                 # 检查时间是否重叠
                 if db_manager.check_time_overlap(room_id, seat_id, start_time, end_time):
                     return jsonify(
-                        {'success': False, 'message': 'Time overlap detected for the given room and seat'}), 400
+                        {'success': False, 'message': '该座位该时间段已经被占用'}), 400
 
                 reservation_end_time = '2025-12-31 17:00:00'
-
                 account_status = 9
                 refresh_status = True
                 reservation_status = True
@@ -261,14 +279,14 @@ def cancel_seat():
                 return jsonify(success=False, message='没有预约数据')
 
             for item in appointments:
-                username, password, times, room_id, seat_id, day_week,is_auto_reservation ,account_status = item.values()
+                username, password, times, room_id, seat_id, day_week, is_auto_reservation, account_status = item.values()
                 if get_status_code_by_name(account_status) in ['0', '1', '3', '5']:
                     # 登录
                     s = XxTWebApi(sleep_time=1, max_attempt=1, reserve_next_day=False)
                     s.get_login_status()
                     s.login(account, password)
                     s.requests.headers.update({'Host': 'office.chaoxing.com'})
-                    if account_status in [0]:
+                    if get_status_code_by_name(account_status) in ['0']:
                         suc = s.submit_cancel(account, 'time', room_id, seat_id)
                     else:
                         suc = s.submit_signback(account, 'time', room_id, seat_id)

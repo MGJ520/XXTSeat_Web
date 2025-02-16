@@ -7,32 +7,35 @@ WEB_EXPIRATION_DATE   =24
 #Web服务器地址服务端口，80是默认http端口
 WEB_SERVER_PORT       =80
 
-# 设置更新间隔（秒）
-UPDATE_INTERVAL =      2
-
-MON_SERVER_PORT=       8009
 
 
-# 接口ip限制
+# ----------------------------------接口ip限制----------------------------------
 # 设置请求时间窗口和最大请求次数
 LOW_REQUEST_TIME_WINDOW = timedelta(seconds=30)
 # 最大请求次数
 LOW_MAX_REQUESTS        = 30
+
 
 # 设置请求时间窗口和最大请求次数
 MIN_REQUEST_TIME_WINDOW = timedelta(seconds=30)
 # 最大请求次数
 MIN_MAX_REQUESTS        = 5
 
+
+
 # 设置请求时间窗口和最大请求次数
 HIGN_REQUEST_TIME_WINDOW = timedelta(minutes=1)
 # 最大请求次数
 HIGN_MAX_REQUESTS        = 5
 
+
+
 # 设置请求时间窗口和最大请求次数
 HIGN_LONG_REQUEST_TIME_WINDOW = timedelta(hours=24)
 # 最大请求次数
 HIGN_LONG_MAX_REQUESTS        = 5
+
+
 
 #--------------------------------MYSQL数据库设置---------------------------------
 # 你的MYSQL数据库IP，localhost是本机地址

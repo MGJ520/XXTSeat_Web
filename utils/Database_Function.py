@@ -342,7 +342,7 @@ class DatabaseManager:
         finally:
             self.close()
 
-    def update_reservation(self, platform_email, start_time=None, end_time=None, reservation_end_time=None,
+    def update_reservation(self,platform_email, reservation_account=None, start_time=None, end_time=None, reservation_end_time=None,
                            room_location=None, seat_location=None, account_status=None, refresh_status=None,
                            reservation_status=None, sign_in_status=None, sign_back_status=None,
                            monitor_sign_in_status=None, reservation_times=None, sign_in_times=None,
@@ -359,6 +359,8 @@ class DatabaseManager:
             # 构建SQL语句和参数
             set_parts = []
             params = []
+            # reservation_account =
+
             if start_time is not None:
                 set_parts.append("start_time = %s")
                 params.append(start_time)
@@ -416,13 +418,12 @@ class DatabaseManager:
             sql = f"""
             UPDATE Reservation
             SET {set_clause}
-            WHERE platform_email = %s
+            WHERE platform_email = %s AND reservation_account = %s
             """
             params.append(platform_email)  # platform_email 作为WHERE子句的条件
-
+            params.append(reservation_account)
             cursor.execute(sql, params)
             self.conn.commit()
-
             if cursor.rowcount > 0:
                 success = True
                 print(f"Reservation updated for {platform_email}.")
@@ -729,11 +730,11 @@ class DatabaseManager:
         finally:
             self.close()
 
-
-    def check_time_overlap(self, room_location, seat_location, start_time, end_time):
-        """检查指定房间和座位是否存在时间重叠"""
+    def check_time_overlap(self, room_location, seat_location, start_time, end_time, exclude_reservation_account=None):
+        """检查指定房间和座位是否存在时间重叠（可排除特定 reservation_account）"""
         try:
             self.connect()
+            # 构建 SQL 查询语句
             check_overlap_query = """
                     SELECT * FROM Reservation
                     WHERE room_location = %s AND seat_location = %s
@@ -741,13 +742,27 @@ class DatabaseManager:
                         (start_time < %s AND end_time > %s) OR
                         (start_time < %s AND end_time > %s) OR
                         (start_time >= %s AND end_time <= %s)
-                    );
-                    """
-            self.cursor.execute(check_overlap_query, (
-                room_location, seat_location, start_time, start_time, end_time, end_time, start_time, end_time))
+                    )
+            """
+            # 如果需要排除某个 reservation_account
+            if exclude_reservation_account is not None:
+                check_overlap_query += " AND reservation_account != %s"
+
+            # 准备参数
+            params = [
+                room_location, seat_location,
+                start_time, start_time,
+                end_time, end_time,
+                start_time, end_time
+            ]
+            if exclude_reservation_account is not None:
+                params.append(exclude_reservation_account)
+
+            # 执行查询
+            self.cursor.execute(check_overlap_query, params)
             return self.cursor.fetchone() is not None
         except Exception as e:
-            print(f"更新用户记录时发生错误：{e}")
+            print(f"检查时间重叠时发生错误：{e}")
             return False
         finally:
             self.close()

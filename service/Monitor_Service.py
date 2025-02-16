@@ -5,7 +5,7 @@ from datetime import datetime
 import psutil
 import time
 
-from config import MON_SERVER_PORT, UPDATE_INTERVAL
+
 
 
 class MonitorService:

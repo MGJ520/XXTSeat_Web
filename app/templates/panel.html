@@ -11,7 +11,7 @@
     <!--   js文件-->
     <script src="/panel_script.js"></script>
     <!--   css文件-->
-    <link rel="stylesheet" href="/panel_style.css">
+
 
 </head>
 
@@ -97,7 +97,7 @@
     <div class="modal-content">
         <div class="input-group-top">
             <h2>预约项</h2>
-            <span class="close">&times;</span>
+            <span id="close_add" class="close">&times;</span>
         </div>
 
         <div class="input-group-add">
@@ -137,6 +137,43 @@
 
     </div>
 </div>
+
+<div id="myModal_server" class="modal">
+    <div class="modal-content">
+        <div class="input-group-top">
+            <h2>服务项</h2>
+            <span id="close_server" class="close">&times;</span>
+        </div>
+
+        <div class="input-group-add">
+            <br>
+            <label>账户</label>
+            <p>15795126651</p>
+            <ul>
+                <li>
+                    <label for="s0">检查</label>
+                    <input id="s0" type="checkbox" class="switch">
+                    <p>定期检查账户状态，并且更新</p>
+                </li>
+                <li>
+                    <label for="s1">签退</label>
+                    <input id="s1" type="checkbox" class="switch">
+                    <p>提供对学习通账户的签退</p>
+                </li>
+                <li>
+                    <label for="s2">签到</label>
+                    <input id="s2" type="checkbox" class="switch" checked>
+                     <p>提供对学习通账户的签到</p>
+                </li>
+                <li>
+                    <label for="s3">预约</label>
+                    <input id="s3" type="checkbox" class="switch" checked>
+                     <p>提供对学习通账户的自动预约服务</p>
+                </li>
+            </ul>
+
+        </div>
+    </div>
 
 </body>
 </html>

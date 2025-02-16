@@ -102,7 +102,7 @@ def is_within_m_minutes_num(timestamp1, timestamp2, m):
 
     if time1 -time2>= 0:
         # 计算两个时间戳的差值，并转换为分钟
-        time_diff_minutes = abs(time1 - time2)
+        time_diff_minutes = abs(time1 - time2)/60
         # 判断时间差是否在m分钟之内
         return time_diff_minutes <= m
     else:
@@ -243,3 +243,14 @@ def get_status_code_by_name(status_name):
     reverse_status = {v: k for k, v in status.items()}
     """根据中文状态名称查询对应的数字键"""
     return reverse_status.get(status_name, None)
+
+
+def is_today(date_str, date_format="%Y-%m-%d"):
+    # 将字符串转换为日期对象
+    date_obj = datetime.strptime(date_str, date_format).date()
+
+    # 获取今天的日期对象
+    today = datetime.today().date()
+
+    # 比较两个日期对象
+    return date_obj == today

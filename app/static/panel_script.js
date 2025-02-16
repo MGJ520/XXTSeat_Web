@@ -14,8 +14,12 @@ function init_all() {
         // highlightTimeRange("09:00", "11:30");
     };
 
-    document.getElementsByClassName("close")[0].onclick = function () {
+    document.getElementById("close_add").onclick = function () {
         document.getElementById("myModal").style.display = "none";
+    };
+
+    document.getElementById("close_server").onclick = function () {
+        document.getElementById("myModal_server").style.display = "none";
     };
 
 
@@ -394,7 +398,7 @@ function addCardsToContent(dataArray) {
 }
 
 function service() {
-    alert("服务功能尚未实现！");
+    document.getElementById("myModal_server").style.display = "flex";
 }
 
 function releaseSeat(button) {
@@ -409,10 +413,6 @@ function releaseSeat(button) {
 
     // 从卡片中提取 data.account 等信息
     const account = user_card.querySelector("#show-account p").textContent;
-    // const time = user_card.querySelector("#show-time").textContent;
-    // const room = user_card.querySelector("#show-room").textContent;
-    // const seat = user_card.querySelector("#show-seat").textContent;
-
     const data = {
         account: account
     };
@@ -439,8 +439,46 @@ function releaseSeat(button) {
         });
 }
 
-function editInfo() {
-    alert("修改功能尚未实现！");
+function editInfo(button) {
+    // 找到按钮所在的卡片（向上查找直到找到 class="card user-card" 的元素）
+    const user_card = button.closest(".card.user-card");
+
+    if (!user_card) {
+        alert("无法找到对应的卡片！");
+        return;
+    }
+
+    // 从卡片中提取 data.account 等信息
+    const account = user_card.querySelector("#show-account p").textContent;
+    const time = user_card.querySelector("#show-time").textContent;
+    const room = user_card.querySelector("#show-room").textContent;
+    const seat = user_card.querySelector("#show-seat").textContent;
+
+    // 获取密码值（从 data-password 属性中获取）
+    const password = user_card.querySelector(".password-toggle").getAttribute("data-password");
+
+    // 拆分时间
+    const [startTime, endTime] = time.split("-").map(t => t.trim());
+
+    // 提取座位编号（去掉“座位”字样，并去掉前导零）
+    const seatNumber = parseInt(seat.replace("座位", "").trim(), 10);
+    // 输出或使用这些值
+    // console.log("Account:", account);
+    // console.log("Password:", password);
+    // console.log("Start Time:", startTime);
+    // console.log("End Time:", endTime);
+    // console.log("Room:", room);
+    // console.log("Seat:", seatNumber);
+
+    document.getElementById('reservation_account').value = account;
+    document.getElementById('reservation_password').value = password;
+    selectedStart = startTime;
+    selectedEnd = endTime; // 获取结束时间
+    highlightTimeRange(startTime, endTime);
+    document.getElementById('room_select').value = room;
+    updateSeats(room)
+    document.getElementById('seat_show_num').selectedIndex = (parseInt(seat, 10) - 1);
+    document.getElementById("myModal").style.display = "block";
 }
 
 function deleteCard(button) {
